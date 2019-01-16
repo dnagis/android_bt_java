@@ -1,25 +1,25 @@
 /**
  *
- * adb uninstall com.example.android.startvvnx
+ * adb uninstall com.example.android.bluevvnx
  * 
  * 
- * adb install out/target/product/mido/system/app/StartVvnx/StartVvnx.apk
+ * adb install out/target/product/mido/system/app/BlueVvnx/BlueVvnx.apk
  * ou
- * adb install out/target/product/generic_arm64/system/app/StartVvnx/StartVvnx.apk
+ * adb install out/target/product/generic_arm64/system/app/BlueVvnx/BlueVvnx.apk
  * 
  * Lancement du service en shell (nom du service: celui déclaré dans le manifest -component name-) 
  * 
  * #indispensable, survit au reboot (tant que tu réinstalles pas l'appli), sinon app is in background uid null
- * dumpsys deviceidle whitelist +com.example.android.startvvnx
+ * dumpsys deviceidle whitelist +com.example.android.bluevvnx
  * 
- * am start-service com.example.android.startvvnx/.StartVvnx  
+ * am start-service com.example.android.bluevvnx/.BlueVvnx  
  *  
  * 
  * logcat -s StartVvnx
  * 
  * 
  * Lancement avec un intent explicite, syntaxe:
- * am start-service -a android.intent.action.DIAL com.example.android.startvvnx/.StartVvnx
+ * am start-service -a android.intent.action.DIAL com.example.android.bluevvnx/.BlueVvnx
  *
  * 
  * 
@@ -30,10 +30,12 @@ package com.example.android.bluevvnx;
 import android.app.Service;
 import android.util.Log;
 import android.os.IBinder;
+import android.os.Handler;
 import android.content.Intent;
 
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothManager;
+import android.bluetooth.BluetoothDevice;
 
 
 
@@ -43,6 +45,8 @@ public class BlueVvnx extends Service {
 	
 	// Local Bluetooth adapter
     private BluetoothAdapter mBluetoothAdapter = null;
+    
+    private Handler mHandler;
  
     @Override
     public void onCreate() {
@@ -62,6 +66,7 @@ public class BlueVvnx extends Service {
             return;
         }
 		
+		scanLeDevice();
 			
 				
         //stopSelf(); //j'avais mis ça juste parce que le dev guide disait qu'il fallait faire le ménage soi-même
@@ -85,5 +90,36 @@ public class BlueVvnx extends Service {
       // We don't provide binding, so return null
       return null;
 	}
+	
+	
+	
+	
+	private void scanLeDevice() {
+
+            /*mHandler.postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    mBluetoothAdapter.stopLeScan(mLeScanCallback);
+                }
+            }, 10000);*/
+
+
+            mBluetoothAdapter.startLeScan(mLeScanCallback);
+        }
+        
+        
+
+
+
+	private BluetoothAdapter.LeScanCallback mLeScanCallback =
+	        new BluetoothAdapter.LeScanCallback() {
+	    @Override
+	    public void onLeScan(BluetoothDevice device, int rssi,
+	            byte[] scanRecord) {
+	        Log.d(TAG, "retour de scan addr=" + device.getAddress());
+	   }
+	};
+
+
 }
 
