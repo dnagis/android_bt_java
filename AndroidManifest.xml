@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Copyright (C) 2007 The Android Open Source Project
+
+     Licensed under the Apache License, Version 2.0 (the "License");
+     you may not use this file except in compliance with the License.
+     You may obtain a copy of the License at
+  
+          http://www.apache.org/licenses/LICENSE-2.0
+  
+     Unless required by applicable law or agreed to in writing, software
+     distributed under the License is distributed on an "AS IS" BASIS,
+     WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     See the License for the specific language governing permissions and
+     limitations under the License.
+-->
+
+<!-- Declare the contents of this Android application.  The namespace
+     attribute brings in the Android platform namespace, and the package
+     supplies a unique name for the application.  When writing your
+     own application, the package name must be changed from "com.example.*"
+     to come from a domain that you own or have control over. -->
+     
+
+
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.example.android.bluevvnx">
+    
+    <!-- si je mets rien il target 27 et ca plante à l'install sur le moto X non rooté 
+    INSTALL_FAILED_OLDER_SDK Requires newer sdk version #27 (current version is #26)] -->
+    <uses-sdk android:targetSdkVersion="26" android:minSdkVersion="10"/>
+    
+    <!-- <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" /> -->
+    <uses-permission android:name="android.permission.BLUETOOTH" />
+    <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />
+    
+    <application 
+    android:label="Bluetooth Vvnx"
+    android:directBootAware="true"
+    android:debuggable="true">
+        <service
+            android:name=".BlueVvnx"
+            android:label="@string/mon_label_vvnx"
+            android:exported="true">
+        </service>
+    </application>
+</manifest>
