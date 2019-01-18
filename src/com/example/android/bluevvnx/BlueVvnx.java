@@ -42,6 +42,14 @@ import android.content.Intent;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothManager;
 import android.bluetooth.BluetoothDevice;
+//gestion des filtres le 18 01
+import android.bluetooth.le.BluetoothLeScanner;
+import android.bluetooth.le.ScanFilter;
+import android.bluetooth.le.ScanSettings;
+import android.bluetooth.le.ScanCallback;
+import android.bluetooth.le.ScanResult;
+import java.util.Collections;
+import java.util.List;
 
 
 
@@ -49,10 +57,10 @@ public class BlueVvnx extends Service {
 	
 	private static final String TAG = "BlueVvnx";
 	
-	// Local Bluetooth adapter
-    private BluetoothAdapter mBluetoothAdapter = null;
-    
-    //private Handler mHandler;
+
+    private BluetoothAdapter mBluetoothAdapter = null;    
+	private BluetoothLeScanner mBluetoothLeScanner = null;
+	
     
     private static final long SCAN_PERIOD = 32000;
  
@@ -68,22 +76,29 @@ public class BlueVvnx extends Service {
         
         mBluetoothAdapter = bluetoothManager.getAdapter();
 
-        // If the adapter is null, then Bluetooth is not supported
+
         if (mBluetoothAdapter == null) {
-            Log.d(TAG, "Bluetooth is not available");
+            Log.d(TAG, "fail à la récup de l'adapter");
             return;
         }
+        
+        mBluetoothLeScanner = mBluetoothAdapter.getBluetoothLeScanner();
+        
+        if (mBluetoothLeScanner == null) {
+            Log.d(TAG, "fail à la récup du LeScanner");
+            return;
+        }        
 		
 		scanLeDevice();
 			
 				
-        //stopSelf(); //j'avais mis ça juste parce que le dev guide disait qu'il fallait faire le ménage soi-même
+
     }
     
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
 		Log.d(TAG, "OnStartCommand");
-		//stopSelf(); //j'avais mis ça juste parce que le dev guide disait qu'il fallait faire le ménage soi-même
+
 		return START_NOT_STICKY;
 	}
 
@@ -93,40 +108,65 @@ public class BlueVvnx extends Service {
 		stopSelf();		
 	 }
 	 
-	  @Override
+	@Override
 	public IBinder onBind(Intent intent) {
       // We don't provide binding, so return null
       return null;
 	}
 	
+
+
+
+
+
 	
 	
 	
 	private void scanLeDevice() {
 
-            
-            new Handler().postDelayed(new Runnable() {
-                @Override
-                public void run() {
-					Log.d(TAG, "stopLeScan");
-                    mBluetoothAdapter.stopLeScan(mLeScanCallback);
-                    }
-            }, SCAN_PERIOD);
-
-			Log.d(TAG, "startLeScan");
-            mBluetoothAdapter.startLeScan(mLeScanCallback);
+		new Handler().postDelayed(new Runnable() {
+			@Override
+			public void run() {
+			Log.d(TAG, "stopLeScan");
+			mBluetoothLeScanner.stopScan(mScanCallback);
+			}
+		}, SCAN_PERIOD);
+		
+		
+		ScanFilter.Builder fbuilder = new ScanFilter.Builder();
+		ScanFilter filter = fbuilder.build();
+		final List<ScanFilter> filters = Collections.singletonList(filter);
+		
+		ScanSettings.Builder sbuilder = new ScanSettings.Builder();
+		ScanSettings settings = sbuilder.build();
+		
+		Log.d(TAG, "startScan");
+		mBluetoothLeScanner.startScan(filters, settings, mScanCallback);
         }
         
         
 
 
 
-	private BluetoothAdapter.LeScanCallback mLeScanCallback =
-	        new BluetoothAdapter.LeScanCallback() {
+
+
+
+
+
+	private ScanCallback mScanCallback = new ScanCallback() {
 	    @Override
-	    public void onLeScan(BluetoothDevice device, int rssi,
-	            byte[] scanRecord) {
-	        Log.d(TAG, "retour de scan addr=" + device.getAddress());
+	    public void onScanResult(int callbackType, ScanResult result) {
+	        Log.d(TAG, "onScanResult");
+	   }
+	   
+	   	@Override
+	    public void onScanFailed(int errorCode) {
+	        Log.d(TAG, "onScanFailed");
+	   }
+	   
+	   	@Override
+	    public void onBatchScanResults(List<ScanResult> results) {
+	        Log.d(TAG, "onBatchScanResults");
 	   }
 	};
 
