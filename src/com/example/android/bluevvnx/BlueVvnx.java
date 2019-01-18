@@ -13,6 +13,12 @@
  * dumpsys deviceidle whitelist +com.example.android.bluevvnx
  * 
  * am start-service com.example.android.bluevvnx/.BlueVvnx  
+ * am stop-service com.example.android.bluevvnx/.BlueVvnx 
+ * 
+ * si problème de permisssions:
+ * 
+ * 	pm grant com.example.android.bluevvnx android.permission.ACCESS_COARSE_LOCATION
+ *  pm grant com.example.android.bluevvnx android.permission.ACCESS_FINE_LOCATION
  *  
  * 
  * logcat -s StartVvnx
@@ -46,7 +52,9 @@ public class BlueVvnx extends Service {
 	// Local Bluetooth adapter
     private BluetoothAdapter mBluetoothAdapter = null;
     
-    private Handler mHandler;
+    //private Handler mHandler;
+    
+    private static final long SCAN_PERIOD = 32000;
  
     @Override
     public void onCreate() {
@@ -96,14 +104,16 @@ public class BlueVvnx extends Service {
 	
 	private void scanLeDevice() {
 
-            /*mHandler.postDelayed(new Runnable() {
+            
+            new Handler().postDelayed(new Runnable() {
                 @Override
                 public void run() {
+					Log.d(TAG, "stopLeScan");
                     mBluetoothAdapter.stopLeScan(mLeScanCallback);
-                }
-            }, 10000);*/
+                    }
+            }, SCAN_PERIOD);
 
-
+			Log.d(TAG, "startLeScan");
             mBluetoothAdapter.startLeScan(mLeScanCallback);
         }
         
