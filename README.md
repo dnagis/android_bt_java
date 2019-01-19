@@ -12,7 +12,7 @@
  dumpsys deviceidle whitelist +com.example.android.bluevvnx
  am start-service com.example.android.bluevvnx/.BlueVvnx  
  am stop-service com.example.android.bluevvnx/.BlueVvnx
- --chiant mais il capte pas les permissions du manifest:
+ --car les autorisations de localisation ne sont plus possibles programmatically, remember? (vie privée etc...)
  pm grant com.example.android.bluevvnx android.permission.ACCESS_FINE_LOCATION
  pm grant com.example.android.bluevvnx android.permission.ACCESS_COARSE_LOCATION
   

@@ -139,8 +139,8 @@ public class BlueVvnx extends Service {
 		
 		
 		ScanSettings.Builder sbuilder = new ScanSettings.Builder()
-			.setScanMode(ScanSettings.SCAN_MODE_BALANCED);
-			//.setNumOfMatches(ScanSettings.MATCH_NUM_ONE_ADVERTISEMENT);
+			.setScanMode(ScanSettings.SCAN_MODE_BALANCED)
+			.setNumOfMatches(ScanSettings.MATCH_NUM_FEW_ADVERTISEMENT);
 		ScanSettings settings = sbuilder.build();
 		
 		Log.d(TAG, "startScan");
