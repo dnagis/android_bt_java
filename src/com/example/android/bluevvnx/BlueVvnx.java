@@ -2,26 +2,24 @@
  *
  * adb uninstall com.example.android.bluevvnx
  * 
- * 
  * adb install out/target/product/mido/system/app/BlueVvnx/BlueVvnx.apk
- * ou
- * adb install out/target/product/generic_arm64/system/app/BlueVvnx/BlueVvnx.apk
  * 
- * Lancement du service en shell (nom du service: celui déclaré dans le manifest -component name-) 
+ * #Lancement du service en shell (nom du service: celui déclaré dans le manifest -component name-) 
  * 
- * #indispensable, survit au reboot (tant que tu réinstalles pas l'appli), sinon app is in background uid null
- * dumpsys deviceidle whitelist +com.example.android.bluevvnx
  * 
  * am start-service com.example.android.bluevvnx/.BlueVvnx  
  * am stop-service com.example.android.bluevvnx/.BlueVvnx 
  * 
- * si problème de permisssions:
+ * #indispensable, survit au reboot (tant que tu réinstalles pas l'appli), sinon app is in background uid null
+ * dumpsys deviceidle whitelist +com.example.android.bluevvnx * 
  * 
- * 	pm grant com.example.android.bluevvnx android.permission.ACCESS_COARSE_LOCATION
- *  pm grant com.example.android.bluevvnx android.permission.ACCESS_FINE_LOCATION
+ * #obligatoire rappelle toi les autorisations de localisation faut les ajouter manuellement toujours:
+ * 
+ * pm grant com.example.android.bluevvnx android.permission.ACCESS_COARSE_LOCATION
+ * pm grant com.example.android.bluevvnx android.permission.ACCESS_FINE_LOCATION
  *  
  * 
- * logcat -s StartVvnx
+ * logcat -s BlueVvnx
  * 
  * 
  * Lancement avec un intent explicite, syntaxe:
@@ -42,12 +40,13 @@ import android.content.Intent;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothManager;
 import android.bluetooth.BluetoothDevice;
-//gestion des filtres le 18 01
+
 import android.bluetooth.le.BluetoothLeScanner;
 import android.bluetooth.le.ScanFilter;
 import android.bluetooth.le.ScanSettings;
 import android.bluetooth.le.ScanCallback;
 import android.bluetooth.le.ScanResult;
+import android.bluetooth.le.ScanRecord;
 import java.util.Collections;
 import java.util.List;
 
@@ -62,7 +61,7 @@ public class BlueVvnx extends Service {
 	private BluetoothLeScanner mBluetoothLeScanner = null;
 	
     
-    private static final long SCAN_PERIOD = 32000;
+    private static final long SCAN_PERIOD = 55000;
  
     @Override
     public void onCreate() {
@@ -129,15 +128,19 @@ public class BlueVvnx extends Service {
 			public void run() {
 			Log.d(TAG, "stopLeScan");
 			mBluetoothLeScanner.stopScan(mScanCallback);
+			stopSelf();
 			}
 		}, SCAN_PERIOD);
 		
 		
-		ScanFilter.Builder fbuilder = new ScanFilter.Builder();
-		ScanFilter filter = fbuilder.build();
+		ScanFilter.Builder fbuilder = new ScanFilter.Builder().setDeviceAddress("30:AE:A4:04:C8:2E");		
+		ScanFilter filter = fbuilder.build();		
 		final List<ScanFilter> filters = Collections.singletonList(filter);
 		
-		ScanSettings.Builder sbuilder = new ScanSettings.Builder();
+		
+		ScanSettings.Builder sbuilder = new ScanSettings.Builder()
+			.setScanMode(ScanSettings.SCAN_MODE_BALANCED);
+			//.setNumOfMatches(ScanSettings.MATCH_NUM_ONE_ADVERTISEMENT);
 		ScanSettings settings = sbuilder.build();
 		
 		Log.d(TAG, "startScan");
@@ -156,7 +159,9 @@ public class BlueVvnx extends Service {
 	private ScanCallback mScanCallback = new ScanCallback() {
 	    @Override
 	    public void onScanResult(int callbackType, ScanResult result) {
-	        Log.d(TAG, "onScanResult");
+			
+			//ScanRecord scanRecord = result.getScanRecord();
+	        Log.d(TAG, "onScanResult addr=" + result.getDevice().getAddress());
 	   }
 	   
 	   	@Override
