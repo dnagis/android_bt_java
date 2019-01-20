@@ -11,7 +11,7 @@
  * am stop-service com.example.android.bluevvnx/.BlueVvnx 
  * 
  * #indispensable, survit au reboot (tant que tu réinstalles pas l'appli), sinon app is in background uid null
- * dumpsys deviceidle whitelist +com.example.android.bluevvnx * 
+ * dumpsys deviceidle whitelist +com.example.android.bluevvnx 
  * 
  * #obligatoire rappelle toi les autorisations de localisation faut les ajouter manuellement toujours:
  * 
@@ -61,7 +61,7 @@ public class BlueVvnx extends Service {
 	private BluetoothLeScanner mBluetoothLeScanner = null;
 	
     
-    private static final long SCAN_PERIOD = 55000;
+    private static final long SCAN_PERIOD = 10000;
  
     @Override
     public void onCreate() {
@@ -160,8 +160,13 @@ public class BlueVvnx extends Service {
 	    @Override
 	    public void onScanResult(int callbackType, ScanResult result) {
 			
-			//ScanRecord scanRecord = result.getScanRecord();
-	        Log.d(TAG, "onScanResult addr=" + result.getDevice().getAddress());
+			ScanRecord scanRecord = result.getScanRecord();
+			byte[] scan_data = scanRecord.getBytes();
+			int temp_intpart = scan_data[5];
+			float temp_decpart = scan_data[6];
+			float temp = temp_intpart + (temp_decpart/100);
+			if (scan_data[4] == 0) temp = -temp;
+	        Log.d(TAG, "onScanResult addr=" + result.getDevice().getAddress() + " temp=" + temp); 
 	   }
 	   
 	   	@Override
