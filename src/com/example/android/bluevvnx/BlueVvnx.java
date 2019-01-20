@@ -24,6 +24,9 @@
  * 
  * Lancement avec un intent explicite, syntaxe:
  * am start-service -a android.intent.action.DIAL com.example.android.bluevvnx/.BlueVvnx
+ * 
+ * sqlite:
+ * sqlite3 /data/data/com.example.android.bluevvnx/databases/temp.db "select * from temp;"
  *
  * 
  * 
@@ -50,6 +53,10 @@ import android.bluetooth.le.ScanRecord;
 import java.util.Collections;
 import java.util.List;
 
+import android.database.sqlite.SQLiteDatabase;
+import android.content.ContentValues;
+import android.content.Context;
+
 
 
 public class BlueVvnx extends Service {
@@ -58,14 +65,21 @@ public class BlueVvnx extends Service {
 	
 
     private BluetoothAdapter mBluetoothAdapter = null;    
-	private BluetoothLeScanner mBluetoothLeScanner = null;
-	
+	private BluetoothLeScanner mBluetoothLeScanner = null;	
     
     private static final long SCAN_PERIOD = 10000;
+    
+    //sql
+    private BaseDeDonnees maBDD;
+    private SQLiteDatabase bdd;
+    
+    Context le_bon_context;
  
     @Override
     public void onCreate() {
 		Log.d(TAG, "onCreate");	
+		
+		le_bon_context = this;
 		
 		// Get local Bluetooth adapter
         //mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter(); //serait l'ancienne version selon BluetoothAdapter.java
@@ -166,7 +180,18 @@ public class BlueVvnx extends Service {
 			float temp_decpart = scan_data[6];
 			float temp = temp_intpart + (temp_decpart/100);
 			if (scan_data[4] == 0) temp = -temp;
-	        Log.d(TAG, "onScanResult addr=" + result.getDevice().getAddress() + " temp=" + temp); 
+			long timestamp = System.currentTimeMillis()/1000;
+	        Log.d(TAG, "onScanResult addr=" + result.getDevice().getAddress() + " temp=" + temp + " " + timestamp); 
+	        	        
+	        maBDD = new BaseDeDonnees(le_bon_context);
+            bdd = maBDD.getWritableDatabase();
+            ContentValues values = new ContentValues();
+            values.put("ALRMTIME", timestamp);
+            values.put("TEMP", temp);
+            bdd.insert("temp", null, values);
+            
+            mBluetoothLeScanner.stopScan(mScanCallback);
+			stopSelf();
 	   }
 	   
 	   	@Override
