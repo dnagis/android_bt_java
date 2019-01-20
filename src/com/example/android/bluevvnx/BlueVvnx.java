@@ -24,6 +24,7 @@
  * 
  * Lancement avec un intent explicite, syntaxe:
  * am start-service -a android.intent.action.DIAL com.example.android.bluevvnx/.BlueVvnx
+ * 
  *
  * 
  * 
