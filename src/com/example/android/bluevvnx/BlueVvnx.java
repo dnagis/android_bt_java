@@ -134,7 +134,7 @@ public class BlueVvnx extends Service {
 		}, SCAN_PERIOD);
 		
 		
-		ScanFilter.Builder fbuilder = new ScanFilter.Builder().setDeviceAddress("30:AE:A4:04:C8:2E");		
+		ScanFilter.Builder fbuilder = new ScanFilter.Builder().setDeviceAddress("30:AE:A4:04:C3:5A");		
 		ScanFilter filter = fbuilder.build();		
 		final List<ScanFilter> filters = Collections.singletonList(filter);
 		
