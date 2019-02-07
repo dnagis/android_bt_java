@@ -134,7 +134,14 @@ public class BlueVvnx extends Service {
 		}, SCAN_PERIOD);
 		
 		
-		ScanFilter.Builder fbuilder = new ScanFilter.Builder().setDeviceAddress("30:AE:A4:04:C3:5A");		
+		//ScanFilter.Builder fbuilder = new ScanFilter.Builder().setDeviceAddress("30:AE:A4:04:C3:5A");	
+	
+		
+		ScanFilter.Builder fbuilder = new ScanFilter.Builder();
+
+		//fbuilder.setDeviceAddress("30:AE:A4:45:C8:86");
+		//fbuilder.setDeviceAddress("30:AE:A4:04:C3:5A");// il ne prend que le dernier...
+			
 		ScanFilter filter = fbuilder.build();		
 		final List<ScanFilter> filters = Collections.singletonList(filter);
 		
@@ -146,6 +153,7 @@ public class BlueVvnx extends Service {
 		
 		Log.d(TAG, "startScan");
 		mBluetoothLeScanner.startScan(filters, settings, mScanCallback);
+
         }
         
         
@@ -160,6 +168,13 @@ public class BlueVvnx extends Service {
 	private ScanCallback mScanCallback = new ScanCallback() {
 	    @Override
 	    public void onScanResult(int callbackType, ScanResult result) {
+			String addr_result = result.getDevice().getAddress();
+			
+			//filtre perso. 
+			String addrfilter1 = new String("30:AE:A4:45:C8:86");
+			String addrfilter2 = new String("30:AE:A4:04:C3:5A");
+			if (!addr_result.equals(addrfilter1) && !addr_result.equals(addrfilter2)) return;
+
 			
 			ScanRecord scanRecord = result.getScanRecord();
 			byte[] scan_data = scanRecord.getBytes();
@@ -167,7 +182,7 @@ public class BlueVvnx extends Service {
 			float temp_decpart = scan_data[6];
 			float temp = temp_intpart + (temp_decpart/100);
 			if (scan_data[4] == 0) temp = -temp;
-	        Log.d(TAG, "onScanResult addr=" + result.getDevice().getAddress() + " temp=" + temp); 
+	        Log.d(TAG, "onScanResult addr=" + addr_result + " temp=" + temp); 
 	   }
 	   
 	   	@Override
