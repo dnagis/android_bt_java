@@ -19,6 +19,8 @@
  
  logcat -s BlueVvnx
  
+ 
+ ***essai septembre 2019: fonctionnement très inconstant, natif (BT HAL) marche un peu mieux***
 
 
  
