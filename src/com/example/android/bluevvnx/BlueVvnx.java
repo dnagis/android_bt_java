@@ -41,6 +41,10 @@ import android.content.Intent;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothManager;
 import android.bluetooth.BluetoothDevice;
+import android.bluetooth.BluetoothGatt;
+import android.bluetooth.BluetoothGattCallback;
+import android.bluetooth.BluetoothGattCharacteristic;
+import android.bluetooth.BluetoothProfile;
 
 import android.bluetooth.le.BluetoothLeScanner;
 import android.bluetooth.le.ScanFilter;
@@ -48,8 +52,10 @@ import android.bluetooth.le.ScanSettings;
 import android.bluetooth.le.ScanCallback;
 import android.bluetooth.le.ScanResult;
 import android.bluetooth.le.ScanRecord;
+
 import java.util.Collections;
 import java.util.List;
+import java.util.UUID;
 
 
 
@@ -60,9 +66,10 @@ public class BlueVvnx extends Service {
 
     private BluetoothAdapter mBluetoothAdapter = null;    
 	private BluetoothLeScanner mBluetoothLeScanner = null;
+	private BluetoothGatt bluetoothGatt = null;
 	
     
-    private static final long SCAN_PERIOD = 10000;
+    private static final long SCAN_PERIOD = 30000;
  
     @Override
     public void onCreate() {
@@ -82,14 +89,31 @@ public class BlueVvnx extends Service {
             return;
         }
         
-        mBluetoothLeScanner = mBluetoothAdapter.getBluetoothLeScanner();
+        
+        BluetoothDevice monEsp = mBluetoothAdapter.getRemoteDevice("30:AE:A4:04:C3:5A");
+        
+        bluetoothGatt = monEsp.connectGatt(this, true, gattCallback);
+        
+        new Handler().postDelayed(new Runnable() {
+			@Override
+			public void run() {
+			Log.d(TAG, "disconnectGatt");
+			bluetoothGatt.disconnect();
+			stopSelf();
+			}
+		}, SCAN_PERIOD);
+        
+
+        
+        //scan
+        /*mBluetoothLeScanner = mBluetoothAdapter.getBluetoothLeScanner();
         
         if (mBluetoothLeScanner == null) {
             Log.d(TAG, "fail à la récup du LeScanner");
             return;
         }        
 		
-		scanLeDevice();
+		scanLeDevice();*/
 			
 				
 
@@ -116,7 +140,34 @@ public class BlueVvnx extends Service {
 	
 
 
+	// Various callback methods defined by the BLE API.
+    private final BluetoothGattCallback gattCallback =
+            new BluetoothGattCallback() {
+        @Override
+        public void onConnectionStateChange(BluetoothGatt gatt, int status,
+                int newState) {
+            if (newState == BluetoothProfile.STATE_CONNECTED) {
+                Log.i(TAG, "Connected to GATT server.");
+                UUID uuid = UUID.fromString("000000ff-0000-1000-8000-00805f9b34fb");        
+				BluetoothGattCharacteristic myGatChar = new BluetoothGattCharacteristic(uuid, 0, 0);        
+				bluetoothGatt.readCharacteristic(myGatChar);
+            } else if (newState == BluetoothProfile.STATE_DISCONNECTED) {
+                Log.i(TAG, "Disconnected from GATT server.");
+            }
+        }
 
+        
+        @Override
+        // Result of a characteristic read operation
+        public void onCharacteristicRead(BluetoothGatt gatt,
+                BluetoothGattCharacteristic characteristic,
+                int status) {
+				Log.i(TAG, "onCharacteristicRead callback.");
+        }
+
+
+        
+    };
 
 
 	
@@ -155,14 +206,6 @@ public class BlueVvnx extends Service {
 		mBluetoothLeScanner.startScan(filters, settings, mScanCallback);
 
         }
-        
-        
-
-
-
-
-
-
 
 
 	private ScanCallback mScanCallback = new ScanCallback() {
