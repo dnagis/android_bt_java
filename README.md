@@ -1,6 +1,10 @@
- Le plus simple possible pour avoir des retours de LeScan
+ Bluetooth en java, le plus simple possible 
  
  Basé sur stub_service (StartVvnx) Squelette (arborescence et Android.mk) tiré de development/samples/
+ 
+ Première fonction implémentée: LeScan mBluetoothLeScanner.startScan(filters, settings, mScanCallback) --> mScanCallback 
+ 
+ 
   
  aosp:
  make BlueVvnx 
