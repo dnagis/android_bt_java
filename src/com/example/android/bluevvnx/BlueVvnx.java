@@ -82,7 +82,7 @@ public class BlueVvnx extends Service {
 			bluetoothGatt.disconnect();
 			stopSelf();
 			}
-		}, TIMEOUT); //sinon s'arrête jamais. permet auto recoonect ??				
+		}, TIMEOUT); //sinon s'arrête jamais. permet auto reconnect ??				
 
     }
     
@@ -142,10 +142,15 @@ public class BlueVvnx extends Service {
         public void onCharacteristicRead(BluetoothGatt gatt, BluetoothGattCharacteristic characteristic, int status) {
 				Log.i(TAG, "onCharacteristicRead callback.");
 				byte[] data = characteristic.getValue();
-				Log.i(TAG, "recup data de la characteristic: " + data[0] + " " + data[1] + " " + data[2]);
+				maFonctionParseData(data);
+				
         }
 	
 	};
+	
+	private void maFonctionParseData(byte[] data) {
+		Log.i(TAG, "recup data de la characteristic: " + data[0] + " " + data[1] + " " + data[2]);
+	}
 
 
 	/**Partie scan**/
