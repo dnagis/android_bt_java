@@ -1,8 +1,10 @@
- Bluetooth en java, le plus simple possible 
+ Bluetooth en java, keep simple please
  
  Basé sur stub_service (StartVvnx) Squelette (arborescence et Android.mk) tiré de development/samples/
  
  Première fonction implémentée: LeScan mBluetoothLeScanner.startScan(filters, settings, mScanCallback) --> mScanCallback 
+ 
+ Deuxième fonction: gatt client: se connecte à l'esp32->bluetooth/bluedroid/ble/gatt_server
  
  
   
@@ -14,19 +16,22 @@
  
  adb shell:
  dumpsys deviceidle whitelist +com.example.android.bluevvnx
- am start-service com.example.android.bluevvnx/.BlueVvnx  
- am stop-service com.example.android.bluevvnx/.BlueVvnx
- --car les autorisations de localisation ne sont plus possibles programmatically, remember? (vie privée etc...)
  pm grant com.example.android.bluevvnx android.permission.ACCESS_FINE_LOCATION
- pm grant com.example.android.bluevvnx android.permission.ACCESS_COARSE_LOCATION
-  
+ pm grant com.example.android.bluevvnx android.permission.ACCESS_COARSE_LOCATION 
  
+ am start-service com.example.android.bluevvnx/.BlueVvnx  
+ 
+ ou avec un intent explicite, syntaxe:
+ 
+ am start-service -a android.intent.action.DIAL com.example.android.bluevvnx/.BlueVvnx
+  
  logcat -s BlueVvnx
  
+ am stop-service com.example.android.bluevvnx/.BlueVvnx
  
- ***essai septembre 2019: fonctionnement très inconstant, natif (BT HAL) marche un peu mieux***
 
-
+ Page très helpfull pour GATT:
+ http://nilhcem.com/android-things/bluetooth-low-energy
  
  
 

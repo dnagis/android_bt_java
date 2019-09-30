@@ -1,36 +1,3 @@
-/**
- *
- * adb uninstall com.example.android.bluevvnx
- * 
- * adb install out/target/product/mido/system/app/BlueVvnx/BlueVvnx.apk
- * 
- * #Lancement du service en shell (nom du service: celui déclaré dans le manifest -component name-) 
- * 
- * 
- * am start-service com.example.android.bluevvnx/.BlueVvnx  
- * am stop-service com.example.android.bluevvnx/.BlueVvnx 
- * 
- * #indispensable, survit au reboot (tant que tu réinstalles pas l'appli), sinon app is in background uid null
- * dumpsys deviceidle whitelist +com.example.android.bluevvnx 
- * 
- * #obligatoire rappelle toi les autorisations de localisation faut les ajouter manuellement toujours:
- * 
- * pm grant com.example.android.bluevvnx android.permission.ACCESS_COARSE_LOCATION
- * pm grant com.example.android.bluevvnx android.permission.ACCESS_FINE_LOCATION
- *  
- * 
- * logcat -s BlueVvnx
- * 
- * 
- * Lancement avec un intent explicite, syntaxe:
- * am start-service -a android.intent.action.DIAL com.example.android.bluevvnx/.BlueVvnx
- * 
- *
- * Page très helpful pou GATT:
- * http://nilhcem.com/android-things/bluetooth-low-energy
- * 
- */
-
 package com.example.android.bluevvnx;
 
 import android.app.Service;
@@ -70,9 +37,9 @@ public class BlueVvnx extends Service {
 	private BluetoothGatt bluetoothGatt = null;
 	
     
-    private static final long SCAN_PERIOD = 5000;
+    private static final long TIMEOUT = 5000;
     
-    //[30:AE:A4:04:C3:5A][LE]> primary
+    //uuid du service: gatttool --> [30:AE:A4:04:C3:5A][LE]> primary
     private static final UUID SERVICE_UUID = UUID.fromString("000000ff-0000-1000-8000-00805f9b34fb");
     //[30:AE:A4:04:C3:5A][LE]> characteristics
 	private static final UUID CHARACTERISTIC_PRFA_UUID = UUID.fromString("0000ff01-0000-1000-8000-00805f9b34fb");
@@ -92,7 +59,16 @@ public class BlueVvnx extends Service {
             Log.d(TAG, "fail à la récup de l'adapter");
             return;
         }
+        
+        //scan: chronologiquement: 1ère fonction implémentée dans ce projet
+        /*mBluetoothLeScanner = mBluetoothAdapter.getBluetoothLeScanner();        
+        if (mBluetoothLeScanner == null) {
+            Log.d(TAG, "fail à la récup du LeScanner");
+            return;
+        } 		
+		scanLeDevice();*/
          
+        //Gatt client 
         BluetoothDevice monEsp = mBluetoothAdapter.getRemoteDevice("30:AE:A4:04:C3:5A");
         
         bluetoothGatt = monEsp.connectGatt(this, false, gattCallback);
@@ -104,28 +80,16 @@ public class BlueVvnx extends Service {
 			bluetoothGatt.disconnect();
 			stopSelf();
 			}
-		}, SCAN_PERIOD);
-        
-
-        
-        //scan
-        /*mBluetoothLeScanner = mBluetoothAdapter.getBluetoothLeScanner();
-        
-        if (mBluetoothLeScanner == null) {
-            Log.d(TAG, "fail à la récup du LeScanner");
-            return;
-        }        
-		
-		scanLeDevice();*/
-			
-				
+		}, TIMEOUT); //sinon s'arrête jamais. permet auto recoonect ??				
 
     }
+    
+    
+    //Les 3 fonctions pour extends Service
     
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
 		Log.d(TAG, "OnStartCommand");
-
 		return START_NOT_STICKY;
 	}
 
@@ -143,12 +107,12 @@ public class BlueVvnx extends Service {
 	
 
 
-	// Various callback methods defined by the BLE API.
-    private final BluetoothGattCallback gattCallback =
-            new BluetoothGattCallback() {
+	/**GATT: ça marche que par cb, comme dans l'esp32**/
+	
+	
+    private final BluetoothGattCallback gattCallback = new BluetoothGattCallback() {
         @Override
-        public void onConnectionStateChange(BluetoothGatt gatt, int status,
-                int newState) {
+        public void onConnectionStateChange(BluetoothGatt gatt, int status, int newState) {
             if (newState == BluetoothProfile.STATE_CONNECTED) {
                 Log.i(TAG, "Connected to GATT server.");
                 gatt.discoverServices();
@@ -156,42 +120,33 @@ public class BlueVvnx extends Service {
                 Log.i(TAG, "Disconnected from GATT server.");
             }
         }
+        
+        @Override
+		public void onServicesDiscovered(BluetoothGatt gatt, int status) {
+			
+			if (status != BluetoothGatt.GATT_SUCCESS) {
+					return;
+				}	
+			
+			// Get the characteristic
+			BluetoothGattCharacteristic characteristic = gatt
+			    .getService(SERVICE_UUID)
+			    .getCharacteristic(CHARACTERISTIC_PRFA_UUID);			    
+			gatt.readCharacteristic(characteristic);
+        }
 
         
         @Override
-        // Result of a characteristic read operation
-        public void onCharacteristicRead(BluetoothGatt gatt,
-                BluetoothGattCharacteristic characteristic,
-                int status) {
+        public void onCharacteristicRead(BluetoothGatt gatt, BluetoothGattCharacteristic characteristic, int status) {
 				Log.i(TAG, "onCharacteristicRead callback.");
 				byte[] data = characteristic.getValue();
 				Log.i(TAG, "recup data de la characteristic: " + data[0] + " " + data[1] + " " + data[2]);
         }
-        
-        @Override
-		public void onServicesDiscovered(BluetoothGatt gatt, int status) {
-		  if (status != BluetoothGatt.GATT_SUCCESS) {
-		    // Handle the error
-		    return;
-		  }
-		
-		  // Get the characteristic
-		  BluetoothGattCharacteristic characteristic = gatt
-		    .getService(SERVICE_UUID)
-		    .getCharacteristic(CHARACTERISTIC_PRFA_UUID);
-		    
-		gatt.readCharacteristic(characteristic);
-
-		}
-		
-		
-
-
-        
-    };
-
-
 	
+	};
+
+
+	/**Partie scan**/
 	
 	
 	private void scanLeDevice() {
@@ -203,7 +158,7 @@ public class BlueVvnx extends Service {
 			mBluetoothLeScanner.stopScan(mScanCallback);
 			stopSelf();
 			}
-		}, SCAN_PERIOD);
+		}, TIMEOUT);
 		
 		
 		//ScanFilter.Builder fbuilder = new ScanFilter.Builder().setDeviceAddress("30:AE:A4:04:C3:5A");	
