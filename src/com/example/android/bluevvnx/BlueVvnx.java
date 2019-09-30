@@ -71,7 +71,7 @@ public class BlueVvnx extends Service {
          
         //Gatt client 
         
-        BluetoothDevice monEsp = mBluetoothAdapter.getRemoteDevice("30:AE:A4:04:C3:5A");
+        BluetoothDevice monEsp = mBluetoothAdapter.getRemoteDevice("30:AE:A4:45:C5:8E");
         
         bluetoothGatt = monEsp.connectGatt(this, false, gattCallback);
         
