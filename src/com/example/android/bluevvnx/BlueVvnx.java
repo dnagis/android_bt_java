@@ -26,7 +26,8 @@
  * am start-service -a android.intent.action.DIAL com.example.android.bluevvnx/.BlueVvnx
  * 
  *
- * 
+ * Page très helpful pou GATT:
+ * http://nilhcem.com/android-things/bluetooth-low-energy
  * 
  */
 
@@ -69,7 +70,12 @@ public class BlueVvnx extends Service {
 	private BluetoothGatt bluetoothGatt = null;
 	
     
-    private static final long SCAN_PERIOD = 30000;
+    private static final long SCAN_PERIOD = 5000;
+    
+    //[30:AE:A4:04:C3:5A][LE]> primary
+    private static final UUID SERVICE_UUID = UUID.fromString("000000ff-0000-1000-8000-00805f9b34fb");
+    //[30:AE:A4:04:C3:5A][LE]> characteristics
+	private static final UUID CHARACTERISTIC_PRFA_UUID = UUID.fromString("0000ff01-0000-1000-8000-00805f9b34fb");
  
     @Override
     public void onCreate() {
@@ -78,21 +84,18 @@ public class BlueVvnx extends Service {
 		// Get local Bluetooth adapter
         //mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter(); //serait l'ancienne version selon BluetoothAdapter.java
         
-        final BluetoothManager bluetoothManager =
-        (BluetoothManager) getSystemService(this.BLUETOOTH_SERVICE);
+        final BluetoothManager bluetoothManager = (BluetoothManager) getSystemService(this.BLUETOOTH_SERVICE);
         
         mBluetoothAdapter = bluetoothManager.getAdapter();
-
 
         if (mBluetoothAdapter == null) {
             Log.d(TAG, "fail à la récup de l'adapter");
             return;
         }
-        
-        
+         
         BluetoothDevice monEsp = mBluetoothAdapter.getRemoteDevice("30:AE:A4:04:C3:5A");
         
-        bluetoothGatt = monEsp.connectGatt(this, true, gattCallback);
+        bluetoothGatt = monEsp.connectGatt(this, false, gattCallback);
         
         new Handler().postDelayed(new Runnable() {
 			@Override
@@ -148,9 +151,7 @@ public class BlueVvnx extends Service {
                 int newState) {
             if (newState == BluetoothProfile.STATE_CONNECTED) {
                 Log.i(TAG, "Connected to GATT server.");
-                UUID uuid = UUID.fromString("000000ff-0000-1000-8000-00805f9b34fb");        
-				BluetoothGattCharacteristic myGatChar = new BluetoothGattCharacteristic(uuid, 0, 0);        
-				bluetoothGatt.readCharacteristic(myGatChar);
+                gatt.discoverServices();
             } else if (newState == BluetoothProfile.STATE_DISCONNECTED) {
                 Log.i(TAG, "Disconnected from GATT server.");
             }
@@ -163,7 +164,27 @@ public class BlueVvnx extends Service {
                 BluetoothGattCharacteristic characteristic,
                 int status) {
 				Log.i(TAG, "onCharacteristicRead callback.");
+				byte[] data = characteristic.getValue();
+				Log.i(TAG, "recup data de la characteristic: " + data[0] + " " + data[1] + " " + data[2]);
         }
+        
+        @Override
+		public void onServicesDiscovered(BluetoothGatt gatt, int status) {
+		  if (status != BluetoothGatt.GATT_SUCCESS) {
+		    // Handle the error
+		    return;
+		  }
+		
+		  // Get the characteristic
+		  BluetoothGattCharacteristic characteristic = gatt
+		    .getService(SERVICE_UUID)
+		    .getCharacteristic(CHARACTERISTIC_PRFA_UUID);
+		    
+		gatt.readCharacteristic(characteristic);
+
+		}
+		
+		
 
 
         
