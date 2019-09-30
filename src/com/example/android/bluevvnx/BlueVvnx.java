@@ -142,14 +142,18 @@ public class BlueVvnx extends Service {
         public void onCharacteristicRead(BluetoothGatt gatt, BluetoothGattCharacteristic characteristic, int status) {
 				Log.i(TAG, "onCharacteristicRead callback.");
 				byte[] data = characteristic.getValue();
-				maFonctionParseData(data);
-				
-        }
-	
+				maFonctionParseData(data);				
+        }	
 	};
 	
+	
 	private void maFonctionParseData(byte[] data) {
-		Log.i(TAG, "recup data de la characteristic: " + data[0] + " " + data[1] + " " + data[2]);
+		//voir esp32_bmx280_gatts
+		double temp = (double)(data[0]+(data[1]/100.0));
+        if (data[2]==0) temp=-temp;
+        double press = (double)(data[3]+872+(data[4]/100.0));
+        double hum = (double)(data[5]+(data[6]/100.0));		
+		Log.i(TAG, "recup data de la characteristic: " + temp + " " + press + " " + hum);
 	}
 
 
