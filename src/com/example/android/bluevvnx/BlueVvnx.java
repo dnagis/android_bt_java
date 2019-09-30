@@ -61,6 +61,7 @@ public class BlueVvnx extends Service {
         }
         
         //scan: chronologiquement: 1ère fonction implémentée dans ce projet
+        
         /*mBluetoothLeScanner = mBluetoothAdapter.getBluetoothLeScanner();        
         if (mBluetoothLeScanner == null) {
             Log.d(TAG, "fail à la récup du LeScanner");
@@ -69,6 +70,7 @@ public class BlueVvnx extends Service {
 		scanLeDevice();*/
          
         //Gatt client 
+        
         BluetoothDevice monEsp = mBluetoothAdapter.getRemoteDevice("30:AE:A4:04:C3:5A");
         
         bluetoothGatt = monEsp.connectGatt(this, false, gattCallback);
