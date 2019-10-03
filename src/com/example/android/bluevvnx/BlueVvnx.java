@@ -60,14 +60,14 @@ public class BlueVvnx extends Service {
             return;
         }
         
-        //scan: chronologiquement: 1ère fonction implémentée dans ce projet
-        
+        //scan: chronologiquement: 1ère fonction implémentée dans ce projet        
         /*mBluetoothLeScanner = mBluetoothAdapter.getBluetoothLeScanner();        
         if (mBluetoothLeScanner == null) {
             Log.d(TAG, "fail à la récup du LeScanner");
             return;
         } 		
 		scanLeDevice();*/
+        
          
         //Gatt client 
         
