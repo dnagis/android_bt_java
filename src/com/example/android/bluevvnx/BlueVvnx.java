@@ -37,7 +37,7 @@ public class BlueVvnx extends Service {
 	private BluetoothGatt bluetoothGatt = null;
 	
     
-    private static final long TIMEOUT = 5000;
+    private static final long TIMEOUT = 30000;
     
     //uuid du service: gatttool --> [30:AE:A4:04:C3:5A][LE]> primary
     private static final UUID SERVICE_UUID = UUID.fromString("000000ff-0000-1000-8000-00805f9b34fb");
@@ -70,8 +70,9 @@ public class BlueVvnx extends Service {
         
          
         //Gatt client 
+        BluetoothDevice monEsp = mBluetoothAdapter.getRemoteDevice("30:AE:A4:04:C3:5A");
         
-        BluetoothDevice monEsp = mBluetoothAdapter.getRemoteDevice("30:AE:A4:45:C5:8E");
+        //BluetoothDevice monEsp = mBluetoothAdapter.getRemoteDevice("30:AE:A4:45:C5:8E");
         
         bluetoothGatt = monEsp.connectGatt(this, false, gattCallback);
         
@@ -135,12 +136,25 @@ public class BlueVvnx extends Service {
 			    .getService(SERVICE_UUID)
 			    .getCharacteristic(CHARACTERISTIC_PRFA_UUID);			    
 			gatt.readCharacteristic(characteristic);
+			
+			//enable les notifs, indispensable sinon marche pas...
+			gatt.setCharacteristicNotification(characteristic, true);
         }
 
         
         @Override
         public void onCharacteristicRead(BluetoothGatt gatt, BluetoothGattCharacteristic characteristic, int status) {
 				Log.i(TAG, "onCharacteristicRead callback.");
+				byte[] data = characteristic.getValue();
+				maFonctionParseData(data);				
+        }
+        
+        
+        //réception des notifications: 
+        //côté serveur esp32: esp_ble_gatts_send_indicate(0x03, 0, gl_profile_tab[PROFILE_A_APP_ID].char_handle, sizeof(notify_data), notify_data, false);
+        @Override
+        public void onCharacteristicChanged(BluetoothGatt gatt, BluetoothGattCharacteristic characteristic) {
+				Log.i(TAG, "onCharacteristicChanged callback.");
 				byte[] data = characteristic.getValue();
 				maFonctionParseData(data);				
         }	
