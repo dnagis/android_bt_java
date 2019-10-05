@@ -25,6 +25,9 @@ import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
 
+//pb de multiples instances avec incrémentation du nombre de onCharacteristicChanged
+//https://stackoverflow.com/questions/33274009/how-to-prevent-bluetoothgattcallback-from-being-executed-multiple-times-at-a-tim
+
 
 
 public class BlueVvnx extends Service {
@@ -34,7 +37,8 @@ public class BlueVvnx extends Service {
 
     private BluetoothAdapter mBluetoothAdapter = null;    
 	private BluetoothLeScanner mBluetoothLeScanner = null;
-	private BluetoothGatt bluetoothGatt = null;
+	private BluetoothGatt mBluetoothGatt = null;
+	private BluetoothGattCharacteristic mCharacteristic = null;
 	
     
     private static final long TIMEOUT = 30000;
@@ -74,13 +78,16 @@ public class BlueVvnx extends Service {
         
         //BluetoothDevice monEsp = mBluetoothAdapter.getRemoteDevice("30:AE:A4:45:C5:8E");
         
-        bluetoothGatt = monEsp.connectGatt(this, false, gattCallback);
+
+        
+        
+        mBluetoothGatt = monEsp.connectGatt(this, false, gattCallback);
         
         new Handler().postDelayed(new Runnable() {
 			@Override
 			public void run() {
 			Log.d(TAG, "disconnectGatt");
-			bluetoothGatt.disconnect();
+			mBluetoothGatt.disconnect();
 			stopSelf();
 			}
 		}, TIMEOUT); //sinon s'arrête jamais. permet auto reconnect ??				
@@ -119,8 +126,10 @@ public class BlueVvnx extends Service {
             if (newState == BluetoothProfile.STATE_CONNECTED) {
                 Log.i(TAG, "Connected to GATT server.");
                 gatt.discoverServices();
+
             } else if (newState == BluetoothProfile.STATE_DISCONNECTED) {
                 Log.i(TAG, "Disconnected from GATT server.");
+                mBluetoothGatt.close(); //si je mets pas ça  j'ai n+1 onCharacteristicChanged() à chaque passage (nouvelle instance BluetoothGattCallback?)
             }
         }
         
@@ -132,13 +141,13 @@ public class BlueVvnx extends Service {
 				}	
 			
 			// Get the characteristic
-			BluetoothGattCharacteristic characteristic = gatt
-			    .getService(SERVICE_UUID)
-			    .getCharacteristic(CHARACTERISTIC_PRFA_UUID);			    
-			gatt.readCharacteristic(characteristic);
+			//BluetoothGattCharacteristic characteristic = gatt.getService(SERVICE_UUID).getCharacteristic(CHARACTERISTIC_PRFA_UUID);	
+			    
+			mCharacteristic = gatt.getService(SERVICE_UUID).getCharacteristic(CHARACTERISTIC_PRFA_UUID);
+			gatt.readCharacteristic(mCharacteristic);
 			
 			//enable les notifs, indispensable sinon marche pas...
-			gatt.setCharacteristicNotification(characteristic, true);
+			gatt.setCharacteristicNotification(mCharacteristic, true);
         }
 
         
