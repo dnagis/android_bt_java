@@ -30,6 +30,11 @@ import android.database.sqlite.SQLiteDatabase;
 import android.content.ContentValues;
 import android.content.Context;
 
+//foreground service
+import android.app.Notification;
+import android.app.NotificationManager;
+import android.app.NotificationChannel;
+
 //pb de multiples instances avec incrémentation du nombre de onCharacteristicChanged à chaque nouveau call (am start-service):
 //https://stackoverflow.com/questions/33274009/how-to-prevent-bluetoothgattcallback-from-being-executed-multiple-times-at-a-tim
 
@@ -56,6 +61,9 @@ public class BlueVvnx extends Service {
 	//sql
     private BaseDeDonnees maBDD;
     private SQLiteDatabase bdd;
+    
+    //foreground service
+    Notification mNotification;
  
     @Override
     public void onCreate() {
@@ -92,14 +100,15 @@ public class BlueVvnx extends Service {
         
         mBluetoothGatt = monEsp.connectGatt(this, false, gattCallback);
         
-        new Handler().postDelayed(new Runnable() {
+        //sinon s'arrête jamais. permet auto reconnect ??
+        /*new Handler().postDelayed(new Runnable() {
 			@Override
 			public void run() {
 			Log.d(TAG, "disconnectGatt");
 			mBluetoothGatt.disconnect();
 			stopSelf();
 			}
-		}, TIMEOUT); //sinon s'arrête jamais. permet auto reconnect ??				
+		}, TIMEOUT); */				
 
     }
     
@@ -109,7 +118,30 @@ public class BlueVvnx extends Service {
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
 		Log.d(TAG, "OnStartCommand");
-		return START_NOT_STICKY;
+		
+		//https://developer.android.com/training/notify-user/channels
+        int importance = NotificationManager.IMPORTANCE_DEFAULT;
+        String CHANNEL_ID = "UNE_CHAN_ID";
+        NotificationChannel channel = new NotificationChannel(CHANNEL_ID, "channel_blue", importance);
+        channel.setDescription("android_fait_chier_avec_sa_channel");
+        NotificationManager notificationManager = getSystemService(NotificationManager.class);
+        notificationManager.createNotificationChannel(channel);
+		
+		// Build the notification object.
+        mNotification = new Notification.Builder(this, CHANNEL_ID)  //  The builder requires the context
+                .setSmallIcon(R.drawable.icon)  // the status icon
+                .setTicker("NotifText")  // the status text
+                .setContentTitle("bluevvnx")  // the label of the entry
+                .setContentText("Mec ton appli est en foreground service!")  // the contents of the entry
+                .build();
+		
+		
+        startForeground(1001,mNotification);
+		
+		
+		
+		return START_STICKY;
+		//return START_NOT_STICKY;
 	}
 
     @Override
