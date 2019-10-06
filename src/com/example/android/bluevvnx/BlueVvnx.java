@@ -25,7 +25,12 @@ import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
 
-//pb de multiples instances avec incrémentation du nombre de onCharacteristicChanged
+//sql
+import android.database.sqlite.SQLiteDatabase;
+import android.content.ContentValues;
+import android.content.Context;
+
+//pb de multiples instances avec incrémentation du nombre de onCharacteristicChanged à chaque nouveau call (am start-service):
 //https://stackoverflow.com/questions/33274009/how-to-prevent-bluetoothgattcallback-from-being-executed-multiple-times-at-a-tim
 
 
@@ -47,6 +52,10 @@ public class BlueVvnx extends Service {
     private static final UUID SERVICE_UUID = UUID.fromString("000000ff-0000-1000-8000-00805f9b34fb");
     //[30:AE:A4:04:C3:5A][LE]> characteristics
 	private static final UUID CHARACTERISTIC_PRFA_UUID = UUID.fromString("0000ff01-0000-1000-8000-00805f9b34fb");
+	
+	//sql
+    private BaseDeDonnees maBDD;
+    private SQLiteDatabase bdd;
  
     @Override
     public void onCreate() {
@@ -141,8 +150,6 @@ public class BlueVvnx extends Service {
 				}	
 			
 			// Get the characteristic
-			//BluetoothGattCharacteristic characteristic = gatt.getService(SERVICE_UUID).getCharacteristic(CHARACTERISTIC_PRFA_UUID);	
-			    
 			mCharacteristic = gatt.getService(SERVICE_UUID).getCharacteristic(CHARACTERISTIC_PRFA_UUID);
 			gatt.readCharacteristic(mCharacteristic);
 			
@@ -155,7 +162,7 @@ public class BlueVvnx extends Service {
         public void onCharacteristicRead(BluetoothGatt gatt, BluetoothGattCharacteristic characteristic, int status) {
 				Log.i(TAG, "onCharacteristicRead callback.");
 				byte[] data = characteristic.getValue();
-				maFonctionParseData(data);				
+				parseMaData(data);				
         }
         
         
@@ -165,20 +172,33 @@ public class BlueVvnx extends Service {
         public void onCharacteristicChanged(BluetoothGatt gatt, BluetoothGattCharacteristic characteristic) {
 				Log.i(TAG, "onCharacteristicChanged callback.");
 				byte[] data = characteristic.getValue();
-				maFonctionParseData(data);				
+				parseMaData(data);				
         }	
 	};
 	
 	
-	private void maFonctionParseData(byte[] data) {
-		//voir esp32_bmx280_gatts
+	private void parseMaData(byte[] data) {
+		//voir esp32_bmx280_gatts pour l'encodage des valeurs dans un array de bytes
 		double temp = (double)(data[0]+(data[1]/100.0));
         if (data[2]==0) temp=-temp;
         double press = (double)(data[3]+872+(data[4]/100.0));
         double hum = (double)(data[5]+(data[6]/100.0));		
 		Log.i(TAG, "recup data de la characteristic: " + temp + " " + press + " " + hum);
+		logMoiEnBdd(temp, press, hum);
 	}
-
+	
+	private void logMoiEnBdd(double temp, double press, double hum) {
+		//sqlite3 /data/data/com.example.android.bluevvnx/databases/data.db "select datetime(ALRMTIME, 'unixepoch','localtime'), TEMP, PRES, HUM from envdata;"
+			long timestamp = System.currentTimeMillis()/1000;
+			maBDD = new BaseDeDonnees(this);
+            bdd = maBDD.getWritableDatabase();
+            ContentValues values = new ContentValues();
+            values.put("ALRMTIME", timestamp);
+            values.put("TEMP", temp);
+            values.put("PRES", press);
+            values.put("HUM", hum);
+            bdd.insert("envdata", null, values);
+	}
 
 	/**Partie scan**/
 	

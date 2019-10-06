@@ -31,6 +31,8 @@
  
  am stop-service com.example.android.bluevvnx/.BlueVvnx
  
+ sqlite3 /data/data/com.example.android.bluevvnx/databases/data.db "select datetime(ALRMTIME, 'unixepoch','localtime'), TEMP, PRES, HUM from envdata;"
+ 
 
  Page très helpfull pour GATT:
  http://nilhcem.com/android-things/bluetooth-low-energy
