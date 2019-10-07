@@ -98,7 +98,7 @@ public class BlueVvnx extends Service {
 
         
         
-        mBluetoothGatt = monEsp.connectGatt(this, false, gattCallback);
+        mBluetoothGatt = monEsp.connectGatt(this, true, gattCallback);
         
         //sinon s'arrête jamais. permet auto reconnect ??
         /*new Handler().postDelayed(new Runnable() {
@@ -170,7 +170,12 @@ public class BlueVvnx extends Service {
 
             } else if (newState == BluetoothProfile.STATE_DISCONNECTED) {
                 Log.i(TAG, "Disconnected from GATT server.");
-                mBluetoothGatt.close(); //si je mets pas ça  j'ai n+1 onCharacteristicChanged() à chaque passage (nouvelle instance BluetoothGattCallback?)
+                
+                //si je mets pas ça  j'ai n+1 onCharacteristicChanged() à chaque passage (nouvelle instance BluetoothGattCallback?)
+                //***MAIS***
+                //empêche l'auto-reconnect...
+                //mBluetoothGatt.close(); 
+                
             }
         }
         
