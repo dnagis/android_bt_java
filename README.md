@@ -7,6 +7,8 @@
  Deuxième fonction: gatt client: se connecte à l'esp32
 	bluetooth/bluedroid/ble/gatt_server = point de départ, 
 	https://github.com/dnagis/esp32_bmx280_gatts (le gros de mon travail)
+	
+ Intent BluetoothDevice.ACTION_BOND_STATE_CHANGED reçu (Receiver.java)
  
  
   

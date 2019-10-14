@@ -35,6 +35,10 @@ import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.NotificationChannel;
 
+//intents
+import android.content.BroadcastReceiver;
+import android.content.IntentFilter;
+
 //pb de multiples instances avec incrémentation du nombre de onCharacteristicChanged à chaque nouveau call (am start-service):
 //https://stackoverflow.com/questions/33274009/how-to-prevent-bluetoothgattcallback-from-being-executed-multiple-times-at-a-tim
 
@@ -68,6 +72,11 @@ public class BlueVvnx extends Service {
     @Override
     public void onCreate() {
 		Log.d(TAG, "onCreate");	
+		
+		//Register un broadcast receiver
+		BroadcastReceiver br = new Receiver();
+		IntentFilter filter = new IntentFilter(BluetoothDevice.ACTION_BOND_STATE_CHANGED);
+		this.registerReceiver(br, filter);
 		
 		// Get local Bluetooth adapter
         //mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter(); //serait l'ancienne version selon BluetoothAdapter.java
