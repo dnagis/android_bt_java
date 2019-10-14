@@ -76,7 +76,7 @@ public class BlueVvnx extends Service {
 		//Register un broadcast receiver
 		BroadcastReceiver br = new Receiver();
 		IntentFilter filter = new IntentFilter(BluetoothDevice.ACTION_BOND_STATE_CHANGED);
-		this.registerReceiver(br, filter);
+		//this.registerReceiver(br, filter);
 		
 		// Get local Bluetooth adapter
         //mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter(); //serait l'ancienne version selon BluetoothAdapter.java
@@ -104,6 +104,8 @@ public class BlueVvnx extends Service {
         //BluetoothDevice monEsp = mBluetoothAdapter.getRemoteDevice("30:AE:A4:45:C5:8E");        
         
         mBluetoothGatt = monEsp.connectGatt(this, true, gattCallback);
+        
+        
         
         //lancer disconnect() après TIMEOUT, sinon s'arrête jamais. permet auto reconnect ??
         /*new Handler().postDelayed(new Runnable() {
