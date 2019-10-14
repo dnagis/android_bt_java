@@ -81,7 +81,7 @@ public class BlueVvnx extends Service {
             return;
         }
         
-        //scan: chronologiquement: 1ère fonction implémentée dans ce projet        
+        //scan: historiquement: 1ère fonction implémentée dans ce projet -> je faisais tout en advertise et scan       
         /*mBluetoothLeScanner = mBluetoothAdapter.getBluetoothLeScanner();        
         if (mBluetoothLeScanner == null) {
             Log.d(TAG, "fail à la récup du LeScanner");
@@ -91,16 +91,12 @@ public class BlueVvnx extends Service {
         
          
         //Gatt client 
-        BluetoothDevice monEsp = mBluetoothAdapter.getRemoteDevice("30:AE:A4:04:C3:5A");
-        
-        //BluetoothDevice monEsp = mBluetoothAdapter.getRemoteDevice("30:AE:A4:45:C5:8E");
-        
-
-        
+        BluetoothDevice monEsp = mBluetoothAdapter.getRemoteDevice("30:AE:A4:04:C3:5A");        
+        //BluetoothDevice monEsp = mBluetoothAdapter.getRemoteDevice("30:AE:A4:45:C5:8E");        
         
         mBluetoothGatt = monEsp.connectGatt(this, true, gattCallback);
         
-        //sinon s'arrête jamais. permet auto reconnect ??
+        //lancer disconnect() après TIMEOUT, sinon s'arrête jamais. permet auto reconnect ??
         /*new Handler().postDelayed(new Runnable() {
 			@Override
 			public void run() {
@@ -113,11 +109,21 @@ public class BlueVvnx extends Service {
     }
     
     
-    //Les 3 fonctions pour extends Service
+    //Les 3 fonctions indispensables pour extends Service
     
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
 		Log.d(TAG, "OnStartCommand");
+		
+		/**
+		 * 
+		 * 
+		 * Foreground service -> pour pas qu'il s'arrête automatiquement
+		 * Fonctionne sur un service démarré en shell
+		 * 
+		 * 
+		 * 
+		 * **/
 		
 		//https://developer.android.com/training/notify-user/channels
         int importance = NotificationManager.IMPORTANCE_DEFAULT;
@@ -133,12 +139,9 @@ public class BlueVvnx extends Service {
                 .setTicker("NotifText")  // the status text
                 .setContentTitle("bluevvnx")  // the label of the entry
                 .setContentText("Mec ton appli est en foreground service!")  // the contents of the entry
-                .build();
+                .build();		
 		
-		
-        startForeground(1001,mNotification);
-		
-		
+        startForeground(1001,mNotification);		
 		
 		return START_STICKY;
 		//return START_NOT_STICKY;
@@ -173,7 +176,7 @@ public class BlueVvnx extends Service {
                 
                 //si je mets pas ça  j'ai n+1 onCharacteristicChanged() à chaque passage (nouvelle instance BluetoothGattCallback?)
                 //***MAIS***
-                //empêche l'auto-reconnect...
+                //close() la connexion du coup j'ai pas d'auto-reconnect...
                 //mBluetoothGatt.close(); 
                 
             }
@@ -252,8 +255,7 @@ public class BlueVvnx extends Service {
 		}, TIMEOUT);
 		
 		
-		//ScanFilter.Builder fbuilder = new ScanFilter.Builder().setDeviceAddress("30:AE:A4:04:C3:5A");	
-	
+		//ScanFilter.Builder fbuilder = new ScanFilter.Builder().setDeviceAddress("30:AE:A4:04:C3:5A");		
 		
 		ScanFilter.Builder fbuilder = new ScanFilter.Builder();
 
@@ -284,7 +286,6 @@ public class BlueVvnx extends Service {
 			String addrfilter1 = new String("30:AE:A4:45:C8:86");
 			String addrfilter2 = new String("30:AE:A4:04:C3:5A");
 			if (!addr_result.equals(addrfilter1) && !addr_result.equals(addrfilter2)) return;
-
 			
 			ScanRecord scanRecord = result.getScanRecord();
 			byte[] scan_data = scanRecord.getBytes();
