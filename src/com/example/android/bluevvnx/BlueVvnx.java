@@ -47,6 +47,7 @@ import android.content.IntentFilter;
 public class BlueVvnx extends Service {
 	
 	private static final String TAG = "BlueVvnx";
+	private static final String BDADDR = "30:AE:A4:04:C3:5A";
 	
 
     private BluetoothAdapter mBluetoothAdapter = null;    
@@ -76,7 +77,7 @@ public class BlueVvnx extends Service {
 		//Register un broadcast receiver
 		BroadcastReceiver br = new Receiver();
 		IntentFilter filter = new IntentFilter(BluetoothDevice.ACTION_BOND_STATE_CHANGED);
-		//this.registerReceiver(br, filter);
+		this.registerReceiver(br, filter);
 		
 		// Get local Bluetooth adapter
         //mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter(); //serait l'ancienne version selon BluetoothAdapter.java
@@ -100,10 +101,8 @@ public class BlueVvnx extends Service {
         
          
         //Gatt client 
-        BluetoothDevice monEsp = mBluetoothAdapter.getRemoteDevice("30:AE:A4:04:C3:5A");        
-        //BluetoothDevice monEsp = mBluetoothAdapter.getRemoteDevice("30:AE:A4:45:C5:8E");        
-        
-        mBluetoothGatt = monEsp.connectGatt(this, true, gattCallback);
+        //BluetoothDevice monEsp = mBluetoothAdapter.getRemoteDevice(BDADDR);        
+        //mBluetoothGatt = monEsp.connectGatt(this, true, gattCallback);
         
         
         

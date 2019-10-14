@@ -11,12 +11,18 @@ import android.bluetooth.BluetoothGatt;
 import android.bluetooth.BluetoothGattCallback;
 import android.bluetooth.BluetoothGattCharacteristic;
 import android.bluetooth.BluetoothProfile;
+import java.util.UUID;
 
 
 public class Receiver extends BroadcastReceiver {
 	
 	private static final String TAG = "BlueVvnx";
 	private Context mContext;
+		private BluetoothGattCharacteristic mCharacteristic = null;
+	//uuid du service: gatttool --> [30:AE:A4:04:C3:5A][LE]> primary
+    private static final UUID SERVICE_UUID = UUID.fromString("000000ff-0000-1000-8000-00805f9b34fb");
+    //[30:AE:A4:04:C3:5A][LE]> characteristics
+	private static final UUID CHARACTERISTIC_PRFA_UUID = UUID.fromString("0000ff01-0000-1000-8000-00805f9b34fb");
 
 	
 	@Override
@@ -29,15 +35,16 @@ public class Receiver extends BroadcastReceiver {
 			BluetoothDevice mDevice = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
 			Log.d(TAG, "adresse=" + mDevice.getAddress());
 			if (mDevice.getAddress().equals("30:AE:A4:04:C3:5A")) {
-				connecteLeDevice(mDevice);
+				if (mDevice.getBondState() == BluetoothDevice.BOND_NONE) {
+            			Log.d(TAG, "bond_none -> la voie est libre: connexion...");
+						BluetoothGatt mBluetoothGatt = mDevice.connectGatt(mContext, true, gattCallback);
+				}
+	
 			}			
 		}		
 	}
 	
-	private void connecteLeDevice(BluetoothDevice mDevice){
-			Log.d(TAG, "connexion...");
-			BluetoothGatt mBluetoothGatt = mDevice.connectGatt(mContext, true, gattCallback);			
-	}
+
 	
 	private final BluetoothGattCallback gattCallback = new BluetoothGattCallback() {
         @Override
@@ -52,9 +59,18 @@ public class Receiver extends BroadcastReceiver {
         
         @Override
 		public void onServicesDiscovered(BluetoothGatt gatt, int status) {
-			if (status == BluetoothGatt.GATT_SUCCESS) {
-					Log.i(TAG, "onServicesDiscovered callback.");
+				Log.i(TAG, "onServicesDiscovered callback.");
+				if (status != BluetoothGatt.GATT_SUCCESS) {
+					return;
 				}	
+			
+
+			// Get the characteristic
+			mCharacteristic = gatt.getService(SERVICE_UUID).getCharacteristic(CHARACTERISTIC_PRFA_UUID);
+			gatt.readCharacteristic(mCharacteristic);
+			
+			//enable les notifs, indispensable sinon marche pas...
+			gatt.setCharacteristicNotification(mCharacteristic, true);	
 			
         }
 
