@@ -23,18 +23,18 @@
  pm grant com.example.android.bluevvnx android.permission.ACCESS_FINE_LOCATION;\
  pm grant com.example.android.bluevvnx android.permission.ACCESS_COARSE_LOCATION 
  
- am start-service com.example.android.bluevvnx/.BlueVvnx  
+ am start-service com.example.android.bluevvnx/.BlueService  
  
  ou avec un intent explicite, syntaxe:
  
- am start-service -a android.intent.action.DIAL com.example.android.bluevvnx/.BlueVvnx
+ am start-service -a android.intent.action.DIAL com.example.android.bluevvnx/.BlueService
   
  logcat -s BlueVvnx
  
  ****attention!!****: pour arrêter c'est:
  am force-stop com.example.android.bluevvnx
  et pas:
- am stop-service com.example.android.bluevvnx/.BlueVvnx
+ am stop-service com.example.android.bluevvnx/.BlueService
  
  sqlite3 /data/data/com.example.android.bluevvnx/databases/data.db "select datetime(ALRMTIME, 'unixepoch','localtime'), TEMP, PRES, HUM from envdata;"
  

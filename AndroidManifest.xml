@@ -42,7 +42,7 @@
     android:directBootAware="true"
     android:debuggable="true">
         <service
-            android:name=".BlueVvnx"
+            android:name=".BlueService"
             android:label="@string/mon_label_vvnx"
             android:exported="true">
         </service>

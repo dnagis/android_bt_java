@@ -44,7 +44,7 @@ import android.content.IntentFilter;
 
 
 
-public class BlueVvnx extends Service {
+public class BlueService extends Service {
 	
 	private static final String TAG = "BlueVvnx";
 	private static final String BDADDR = "30:AE:A4:04:C3:5A";
