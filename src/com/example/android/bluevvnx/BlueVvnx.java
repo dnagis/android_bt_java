@@ -56,7 +56,7 @@ public class BlueVvnx extends Service {
 	private BluetoothGattCharacteristic mCharacteristic = null;
 	
     
-    private static final long TIMEOUT = 30000;
+    private static final long TIMEOUT = 25000;
     
     //uuid du service: gatttool --> [30:AE:A4:04:C3:5A][LE]> primary
     private static final UUID SERVICE_UUID = UUID.fromString("000000ff-0000-1000-8000-00805f9b34fb");

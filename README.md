@@ -19,8 +19,8 @@
 
  
  adb shell:
- dumpsys deviceidle whitelist +com.example.android.bluevvnx
- pm grant com.example.android.bluevvnx android.permission.ACCESS_FINE_LOCATION
+ dumpsys deviceidle whitelist +com.example.android.bluevvnx;\
+ pm grant com.example.android.bluevvnx android.permission.ACCESS_FINE_LOCATION;\
  pm grant com.example.android.bluevvnx android.permission.ACCESS_COARSE_LOCATION 
  
  am start-service com.example.android.bluevvnx/.BlueVvnx  
