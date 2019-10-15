@@ -20,20 +20,51 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-<EditText xmlns:android="http://schemas.android.com/apk/res/android" android:id="@+id/text"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:textSize="18sp"
-    android:autoText="true"
-    android:capitalize="sentences"
-    android:text="@string/mon_label_vvnx" />
-    
-    
-     <Button
-     android:id="@+id/button_id"
-     android:layout_height="wrap_content"
-     android:layout_width="wrap_content"
-     android:text="@string/self_destruct"
-     android:onClick="ActionPressBouton" />
+	<Button
+	android:id="@+id/button_1"
+	android:layout_height="wrap_content"
+	android:layout_width="wrap_content"
+	android:layout_alignParentLeft="true"
+	android:text="@string/txt_btn_1"
+	android:onClick="ActionPressBouton_1" />
 
+	<Button
+	android:id="@+id/button_2"
+	android:layout_height="wrap_content"
+	android:layout_width="wrap_content"
+	android:layout_below="@+id/button_1"
+	android:text="@string/txt_btn_2"
+	android:onClick="ActionPressBouton_2" />
+	
+	<Button
+	android:id="@+id/button_3"
+	android:layout_height="wrap_content"
+	android:layout_width="wrap_content"
+	android:layout_alignParentRight="true"
+	android:text="@string/txt_btn_3"
+	android:onClick="ActionPressBouton_3" />
+	
+	<Button
+	android:id="@+id/button_4"
+	android:layout_height="wrap_content"
+	android:layout_width="wrap_content"
+	android:layout_alignParentRight="true"
+	android:layout_below="@+id/button_3"
+	android:text="@string/txt_btn_4"
+	android:onClick="ActionPressBouton_4" />
+	
+	<TextView xmlns:android="http://schemas.android.com/apk/res/android" android:id="@+id/text1"	
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_centerVertical="true"
+    android:textSize="18sp"
+    android:text="@string/lbl_1" />    
+    
+    <TextView xmlns:android="http://schemas.android.com/apk/res/android" android:id="@+id/text2"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_below="@+id/text1"
+    android:textSize="18sp"
+    android:text="@string/lbl_2" />    
+	
 </RelativeLayout>  

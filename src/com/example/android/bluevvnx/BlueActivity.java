@@ -22,13 +22,29 @@ public class BlueActivity extends Activity {
         View view = getLayoutInflater().inflate(R.layout.bluevvnxmain, null);
         setContentView(view);
         
-        final Button button = findViewById(R.id.button_id);
+        final Button button1 = findViewById(R.id.button_1);
+        final Button button2 = findViewById(R.id.button_2);
+        final Button button3 = findViewById(R.id.button_3);
+        final Button button4 = findViewById(R.id.button_4);
 
 
     }
     
-    public void ActionPressBouton(View v) {
-		Log.d(TAG, "press bouton hello world");
+    public void ActionPressBouton_1(View v) {
+		Log.d(TAG, "press bouton 1");
 	}
+	
+	public void ActionPressBouton_2(View v) {
+		Log.d(TAG, "press bouton 2");
+	}
+	
+	public void ActionPressBouton_3(View v) {
+		Log.d(TAG, "press bouton 3");
+	}
+	
+	public void ActionPressBouton_4(View v) {
+		Log.d(TAG, "press bouton 4");
+	}
+	
 }
 

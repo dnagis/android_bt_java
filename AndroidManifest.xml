@@ -49,7 +49,7 @@
         </activity>
         <service
             android:name=".BlueService"
-            android:label="@string/mon_label_vvnx"
+            android:label="@string/lblsrvc"
             android:exported="true">
         </service>
     </application>

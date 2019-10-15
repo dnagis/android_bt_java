@@ -15,7 +15,12 @@
 -->
 
 <resources>
-	<string name="app_name">DwnldVvnx</string>
-    <string name="mon_label_vvnx">Il veulent un label je leur mets un laybeuul...</string>
-        <string name="self_destruct">TxtButton</string>
+	<string name="app_name">BlueVvnx</string>
+	<string name="lblsrvc">lblsrvc</string>
+    <string name="lbl_1">label_1</string>
+    <string name="lbl_2">label_2</string>
+    <string name="txt_btn_1">TxtButton1</string>
+    <string name="txt_btn_2">TxtButton2</string>
+    <string name="txt_btn_3">TxtButton3</string>
+    <string name="txt_btn_4">TxtButton4</string>
 </resources>
