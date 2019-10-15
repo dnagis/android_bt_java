@@ -38,9 +38,15 @@
     
     
     <application 
-    android:label="Bluetooth Vvnx"
+    android:label="BlueVvnx"
     android:directBootAware="true"
     android:debuggable="true">
+        <activity android:name="BlueActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN"/>
+                <category android:name="android.intent.category.LAUNCHER"/>
+            </intent-filter>
+        </activity>
         <service
             android:name=".BlueService"
             android:label="@string/mon_label_vvnx"
