@@ -18,7 +18,7 @@ public class Receiver extends BroadcastReceiver {
 	
 	private static final String TAG = "BlueVvnx";
 	private Context mContext;
-		private BluetoothGattCharacteristic mCharacteristic = null;
+	private BluetoothGattCharacteristic mCharacteristic = null;
 	//uuid du service: gatttool --> [30:AE:A4:04:C3:5A][LE]> primary
     private static final UUID SERVICE_UUID = UUID.fromString("000000ff-0000-1000-8000-00805f9b34fb");
     //[30:AE:A4:04:C3:5A][LE]> characteristics
