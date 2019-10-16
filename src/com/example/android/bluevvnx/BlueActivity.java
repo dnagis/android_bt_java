@@ -6,33 +6,32 @@ import android.view.View;
 import android.view.WindowManager;
 
 import android.widget.Button;
+import android.widget.TextView;
 import android.util.Log;
 
 
 public class BlueActivity extends Activity {
+	
 	private static final String TAG = "BlueVvnx";
-		
+	private BleGattVvnx mBleGattVvnx;
+
+	
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        // Set the layout for this activity.  You can find it
-        // in res/layout/hello_activity.xml
         View view = getLayoutInflater().inflate(R.layout.bluevvnxmain, null);
         setContentView(view);
         
-        final Button button1 = findViewById(R.id.button_1);
-        final Button button2 = findViewById(R.id.button_2);
-        final Button button3 = findViewById(R.id.button_3);
-        final Button button4 = findViewById(R.id.button_4);
 
+		mBleGattVvnx = new BleGattVvnx();
 
     }
     
     public void ActionPressBouton_1(View v) {
 		Log.d(TAG, "press bouton 1");
-		BleGattVvnx.connectEnGatt(this);
+		mBleGattVvnx.connectEnGatt(this);
 	}
 	
 	public void ActionPressBouton_2(View v) {
@@ -46,6 +45,11 @@ public class BlueActivity extends Activity {
 	public void ActionPressBouton_4(View v) {
 		Log.d(TAG, "press bouton 4");
 	}
+	
+	public void updateText(String myString) {
+		TextView textview1 = findViewById(R.id.text1);	
+        textview1.setText(myString);
+    }
 	
 }
 
