@@ -9,10 +9,6 @@ import android.content.Intent;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothManager;
 import android.bluetooth.BluetoothDevice;
-import android.bluetooth.BluetoothGatt;
-import android.bluetooth.BluetoothGattCallback;
-import android.bluetooth.BluetoothGattCharacteristic;
-import android.bluetooth.BluetoothProfile;
 
 import android.bluetooth.le.BluetoothLeScanner;
 import android.bluetooth.le.ScanFilter;
@@ -52,8 +48,6 @@ public class BlueService extends Service {
 
     private BluetoothAdapter mBluetoothAdapter = null;    
 	private BluetoothLeScanner mBluetoothLeScanner = null;
-	private BluetoothGatt mBluetoothGatt = null;
-	private BluetoothGattCharacteristic mCharacteristic = null;
 	
     
     private static final long TIMEOUT = 25000;
@@ -75,21 +69,18 @@ public class BlueService extends Service {
 		Log.d(TAG, "onCreate");	
 		
 		//Register un broadcast receiver
-		BroadcastReceiver br = new Receiver();
+		/*BroadcastReceiver br = new Receiver();
 		IntentFilter filter = new IntentFilter(BluetoothDevice.ACTION_BOND_STATE_CHANGED);
-		this.registerReceiver(br, filter);
+		this.registerReceiver(br, filter);*/
 		
 		// Get local Bluetooth adapter
-        //mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter(); //serait l'ancienne version selon BluetoothAdapter.java
-        
-        final BluetoothManager bluetoothManager = (BluetoothManager) getSystemService(this.BLUETOOTH_SERVICE);
-        
-        mBluetoothAdapter = bluetoothManager.getAdapter();
-
-        if (mBluetoothAdapter == null) {
-            Log.d(TAG, "fail à la récup de l'adapter");
-            return;
-        }
+		//mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter(); //serait l'ancienne version selon BluetoothAdapter.java
+		/*final BluetoothManager bluetoothManager = (BluetoothManager) getSystemService(this.BLUETOOTH_SERVICE);
+		mBluetoothAdapter = bluetoothManager.getAdapter();
+		if (mBluetoothAdapter == null) {
+			Log.d(TAG, "fail à la récup de l'adapter");
+			return;
+		}*/
         
         //scan: historiquement: 1ère fonction implémentée dans ce projet -> je faisais tout en advertise et scan       
         /*mBluetoothLeScanner = mBluetoothAdapter.getBluetoothLeScanner();        
@@ -100,21 +91,9 @@ public class BlueService extends Service {
 		scanLeDevice();*/
         
          
-        //Gatt client 
-        //BluetoothDevice monEsp = mBluetoothAdapter.getRemoteDevice(BDADDR);        
-        //mBluetoothGatt = monEsp.connectGatt(this, true, gattCallback);
-        
-        
-        
-        //lancer disconnect() après TIMEOUT, sinon s'arrête jamais. permet auto reconnect ??
-        /*new Handler().postDelayed(new Runnable() {
-			@Override
-			public void run() {
-			Log.d(TAG, "disconnectGatt");
-			mBluetoothGatt.disconnect();
-			stopSelf();
-			}
-		}, TIMEOUT); */				
+        //Gatt --> BleGattVvnx.java 
+        BleGattVvnx mBleGattVvnx = new BleGattVvnx();
+        mBleGattVvnx.connectEnGatt(this);			
 
     }
     
@@ -170,85 +149,6 @@ public class BlueService extends Service {
 	}
 	
 
-
-	/**GATT: ça marche que par cb, comme dans l'esp32**/
-	
-	
-    private final BluetoothGattCallback gattCallback = new BluetoothGattCallback() {
-        @Override
-        public void onConnectionStateChange(BluetoothGatt gatt, int status, int newState) {
-            if (newState == BluetoothProfile.STATE_CONNECTED) {
-                Log.i(TAG, "Connected to GATT server.");
-                gatt.discoverServices();
-
-            } else if (newState == BluetoothProfile.STATE_DISCONNECTED) {
-                Log.i(TAG, "Disconnected from GATT server.");
-                
-                //si je mets pas ça  j'ai n+1 onCharacteristicChanged() à chaque passage (nouvelle instance BluetoothGattCallback?)
-                //***MAIS***
-                //close() la connexion du coup j'ai pas d'auto-reconnect...
-                //mBluetoothGatt.close(); 
-                
-            }
-        }
-        
-        @Override
-		public void onServicesDiscovered(BluetoothGatt gatt, int status) {
-			
-			if (status != BluetoothGatt.GATT_SUCCESS) {
-					return;
-				}	
-			
-			// Get the characteristic
-			mCharacteristic = gatt.getService(SERVICE_UUID).getCharacteristic(CHARACTERISTIC_PRFA_UUID);
-			gatt.readCharacteristic(mCharacteristic);
-			
-			//enable les notifs, indispensable sinon marche pas...
-			gatt.setCharacteristicNotification(mCharacteristic, true);
-        }
-
-        
-        @Override
-        public void onCharacteristicRead(BluetoothGatt gatt, BluetoothGattCharacteristic characteristic, int status) {
-				Log.i(TAG, "onCharacteristicRead callback.");
-				byte[] data = characteristic.getValue();
-				parseMaData(data);				
-        }
-        
-        
-        //réception des notifications: 
-        //côté serveur esp32: esp_ble_gatts_send_indicate(0x03, 0, gl_profile_tab[PROFILE_A_APP_ID].char_handle, sizeof(notify_data), notify_data, false);
-        @Override
-        public void onCharacteristicChanged(BluetoothGatt gatt, BluetoothGattCharacteristic characteristic) {
-				Log.i(TAG, "onCharacteristicChanged callback.");
-				byte[] data = characteristic.getValue();
-				parseMaData(data);				
-        }	
-	};
-	
-	
-	private void parseMaData(byte[] data) {
-		//voir esp32_bmx280_gatts pour l'encodage des valeurs dans un array de bytes
-		double temp = (double)(data[0]+(data[1]/100.0));
-        if (data[2]==0) temp=-temp;
-        double press = (double)(data[3]+872+(data[4]/100.0));
-        double hum = (double)(data[5]+(data[6]/100.0));		
-		Log.i(TAG, "recup data de la characteristic: " + temp + " " + press + " " + hum);
-		logMoiEnBdd(temp, press, hum);
-	}
-	
-	private void logMoiEnBdd(double temp, double press, double hum) {
-		//sqlite3 /data/data/com.example.android.bluevvnx/databases/data.db "select datetime(ALRMTIME, 'unixepoch','localtime'), TEMP, PRES, HUM from envdata;"
-			long timestamp = System.currentTimeMillis()/1000;
-			maBDD = new BaseDeDonnees(this);
-            bdd = maBDD.getWritableDatabase();
-            ContentValues values = new ContentValues();
-            values.put("ALRMTIME", timestamp);
-            values.put("TEMP", temp);
-            values.put("PRES", press);
-            values.put("HUM", hum);
-            bdd.insert("envdata", null, values);
-	}
 
 	/**Partie scan**/
 	

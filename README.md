@@ -1,6 +1,6 @@
- Bluetooth en java, keep simple please
+ # Bluetooth en java (BlueVvnx)
  
- Basé sur stub_service (StartVvnx) Squelette (arborescence et Android.mk) tiré de development/samples/
+ 2 Entrées possible: via UI ou en shell via am start-service
  
  Première fonction implémentée: LeScan mBluetoothLeScanner.startScan(filters, settings, mScanCallback) --> mScanCallback 
  

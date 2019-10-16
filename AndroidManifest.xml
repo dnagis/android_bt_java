@@ -48,7 +48,7 @@
             </intent-filter>
         </activity>
         <service
-            android:name=".BlueService"
+			android:name=".BlueService"
             android:label="@string/lblsrvc"
             android:exported="true">
         </service>
