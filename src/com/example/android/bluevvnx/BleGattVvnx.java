@@ -80,11 +80,14 @@ public class BleGattVvnx  {
 	private final BluetoothGattCallback gattCallback = new BluetoothGattCallback() {
 	@Override
 	public void onConnectionStateChange(BluetoothGatt gatt, int status, int newState) {
+		mBlueActivity = (BlueActivity) mContext; //pour pouvoir appeler ses methods
 		if (newState == BluetoothProfile.STATE_CONNECTED) {
-			Log.i(TAG, "Connected to GATT server.");
+			Log.i(TAG, "Connected to GATT server.");					
+			mBlueActivity.btn1_to_blue();
 			gatt.discoverServices();
 		} else if (newState == BluetoothProfile.STATE_DISCONNECTED) {
 			Log.i(TAG, "Disconnected from GATT server.");
+			mBlueActivity.btn1_to_def();
 		}
         //si je mets pas ça  j'ai n+1 onCharacteristicChanged() à chaque passage (nouvelle instance BluetoothGattCallback?)
 		//***MAIS***
@@ -126,9 +129,10 @@ public class BleGattVvnx  {
         double hum = (double)(data[5]+(data[6]/100.0));		
 		Log.i(TAG, "recup data de la characteristic: " + temp + " " + press + " " + hum + " @" + ts);
 		logMoiEnBdd(temp, press, hum, ts);
-		//Seulement si c'est via UI (BlueActivity)
-		//mBlueActivity = (BlueActivity) mContext; //pour pouvoir appeler ses methods
-		//mBlueActivity.updateText(String.valueOf(ts));
+		
+		//Seulement si c'est via UI (BlueActivity), sinon si lancé à partir du service en adb shell->plante
+		mBlueActivity = (BlueActivity) mContext; //pour pouvoir appeler ses methods
+		mBlueActivity.updateText(String.valueOf(ts));
 		}
 	
 	private void logMoiEnBdd(double temp, double press, double hum, long ts) {
