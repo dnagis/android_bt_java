@@ -92,7 +92,7 @@ public class BlueService extends Service {
         
          
         //Gatt --> BleGattVvnx.java 
-        //commenter si tu ne te sers qur de l'UI: je veux pas trois tonnes d'instances de BluetoothGATT accross mon appli
+        //commenter si tu ne te sers que de l'UI: je veux pas trois tonnes d'instances de BluetoothGATT accross mon appli
         //BleGattVvnx mBleGattVvnx = new BleGattVvnx();
         //mBleGattVvnx.connectmGatt(this);			
 
@@ -152,7 +152,11 @@ public class BlueService extends Service {
 	
 
 
-	/**Partie scan**/
+	/**Partie scan
+	 * Tu te demandes ce que ça fout là*... normal...
+	 * En fait ça date du tout début, quand je lançais tout en shell (am start-service com.example.android.bluevvnx/.BlueService )
+	 * 
+	 * **/
 	
 	
 	private void scanLeDevice() {
