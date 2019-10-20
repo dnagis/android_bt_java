@@ -92,8 +92,9 @@ public class BlueService extends Service {
         
          
         //Gatt --> BleGattVvnx.java 
-        BleGattVvnx mBleGattVvnx = new BleGattVvnx();
-        mBleGattVvnx.connectmGatt(this);			
+        //commenter si tu ne te sers qur de l'UI: je veux pas trois tonnes d'instances de BluetoothGATT accross mon appli
+        //BleGattVvnx mBleGattVvnx = new BleGattVvnx();
+        //mBleGattVvnx.connectmGatt(this);			
 
     }
     
@@ -108,7 +109,8 @@ public class BlueService extends Service {
 		 * 
 		 * 
 		 * Foreground service -> pour pas qu'il s'arrête automatiquement
-		 * Fonctionne sur un service démarré en shell
+		 * voir tileview
+		 * Fonctionne aussi sur un service démarré en shell
 		 * 
 		 * 
 		 * 

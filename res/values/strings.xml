@@ -20,7 +20,7 @@
     <string name="lbl_1">label_1</string>
     <string name="lbl_2">label_2</string>
     <string name="txt_btn_1">Connect()</string>
-    <string name="txt_btn_2">TxtButton2</string>
+    <string name="txt_btn_2">Start_FG svc</string>
     <string name="txt_btn_3">Disconnect()</string>
-    <string name="txt_btn_4">TxtButton4</string>
+    <string name="txt_btn_4">Stop svc</string>
 </resources>

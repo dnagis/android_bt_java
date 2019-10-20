@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.os.Bundle;
 import android.view.View;
 import android.view.WindowManager;
+import android.content.Intent;
 
 import android.widget.Button;
 import android.widget.TextView;
@@ -39,17 +40,20 @@ public class BlueActivity extends Activity {
 		mBleGattVvnx.connectmGatt(this);
 	}
 	
-	public void ActionPressBouton_2(View v) {
-		Log.d(TAG, "press bouton 2");		
-	}
-	
 	public void ActionPressBouton_3(View v) {
 		Log.d(TAG, "press bouton 3");
 		mBleGattVvnx.disconnectmGatt();
 	}
 	
+	public void ActionPressBouton_2(View v) {
+		Log.d(TAG, "press bouton 2");
+		//foreground service pour importance (am package-importance com.example.android.hellogps) à 125
+		startForegroundService(new Intent(this, BlueService.class));			
+	}
+
 	public void ActionPressBouton_4(View v) {
 		Log.d(TAG, "press bouton 4");
+		stopService(new Intent(this, BlueService.class));
 	}
 	
 	public void updateText(String myString) {
