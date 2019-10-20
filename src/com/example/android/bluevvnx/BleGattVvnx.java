@@ -43,27 +43,31 @@ public class BleGattVvnx  {
     private SQLiteDatabase bdd;
 	
 	 
-	void connectEnGatt(Context rContext){
+	void connectmGatt(Context rContext){
 		mContext = rContext;
 		
 		final BluetoothManager bluetoothManager = (BluetoothManager)mContext.getSystemService(mContext.BLUETOOTH_SERVICE);	
 		mBluetoothAdapter = bluetoothManager.getAdapter();	
 		if (mBluetoothAdapter == null) {
-		Log.d(TAG, "fail à la récup de l'adapter");
-		return;
+			Log.d(TAG, "fail à la récup de l'adapter");
+			return;
 		}
 		
-		BluetoothDevice monEsp = mBluetoothAdapter.getRemoteDevice(BDADDR);        
-		mBluetoothGatt = monEsp.connectGatt(mContext, true, gattCallback);
-		//lancer disconnect() après TIMEOUT, sinon s'arrête jamais. permet auto reconnect ??
-		/*new Handler().postDelayed(new Runnable() {
-			@Override
-			public void run() {
-			Log.d(TAG, "disconnectGatt");
-			mBluetoothGatt.disconnect();
-			stopSelf();
-			}
-		}, TIMEOUT); */	
+		BluetoothDevice monEsp = mBluetoothAdapter.getRemoteDevice(BDADDR);   
+		
+		if (mBluetoothGatt == null) {
+			Log.d(TAG, "pas encore de mBluetoothGatt: on la crée");
+			mBluetoothGatt = monEsp.connectGatt(mContext, true, gattCallback);
+		} else {
+			mBluetoothGatt.connect();
+		}
+		     
+		
+
+	}
+	
+	void disconnectmGatt(){
+		mBluetoothGatt.disconnect();
 	}
 	
 	/**

@@ -93,7 +93,7 @@ public class BlueService extends Service {
          
         //Gatt --> BleGattVvnx.java 
         BleGattVvnx mBleGattVvnx = new BleGattVvnx();
-        mBleGattVvnx.connectEnGatt(this);			
+        mBleGattVvnx.connectmGatt(this);			
 
     }
     

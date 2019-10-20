@@ -36,15 +36,16 @@ public class BlueActivity extends Activity {
     
     public void ActionPressBouton_1(View v) {
 		Log.d(TAG, "press bouton 1");
-		mBleGattVvnx.connectEnGatt(this);
+		mBleGattVvnx.connectmGatt(this);
 	}
 	
 	public void ActionPressBouton_2(View v) {
-		Log.d(TAG, "press bouton 2");
+		Log.d(TAG, "press bouton 2");		
 	}
 	
 	public void ActionPressBouton_3(View v) {
 		Log.d(TAG, "press bouton 3");
+		mBleGattVvnx.disconnectmGatt();
 	}
 	
 	public void ActionPressBouton_4(View v) {

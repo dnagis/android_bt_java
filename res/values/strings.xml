@@ -21,6 +21,6 @@
     <string name="lbl_2">label_2</string>
     <string name="txt_btn_1">Connect()</string>
     <string name="txt_btn_2">TxtButton2</string>
-    <string name="txt_btn_3">TxtButton3</string>
+    <string name="txt_btn_3">Disconnect()</string>
     <string name="txt_btn_4">TxtButton4</string>
 </resources>
