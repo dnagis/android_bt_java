@@ -25,6 +25,9 @@ import android.database.sqlite.SQLiteDatabase;
 import android.content.ContentValues;
 
 public class BleGattVvnx  {
+	
+	//private final String BDADDR = "30:AE:A4:04:C3:5A"; //plaque de dev
+	private final String BDADDR = "30:AE:A4:07:84:16"; //breakout rouge pour tests doorlock
 
 	private Context mContext;
 	private BlueActivity mBlueActivity;
@@ -32,7 +35,8 @@ public class BleGattVvnx  {
 	private BluetoothAdapter mBluetoothAdapter = null;	
 	private BluetoothGattCharacteristic mCharacteristic = null;	
 	private final String TAG = "BlueVvnx";
-	private final String BDADDR = "30:AE:A4:04:C3:5A";
+	
+	
 	//uuid du service: gatttool --> [30:AE:A4:04:C3:5A][LE]> primary
     private static final UUID SERVICE_UUID = UUID.fromString("000000ff-0000-1000-8000-00805f9b34fb");
     //[30:AE:A4:04:C3:5A][LE]> characteristics
