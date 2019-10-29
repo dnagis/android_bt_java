@@ -54,10 +54,11 @@
 	android:onClick="ActionPressBouton_4" />
 	
 	<TextView xmlns:android="http://schemas.android.com/apk/res/android" android:id="@+id/text1"	
-    android:layout_width="match_parent"
+    android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     android:layout_centerVertical="true"
-    android:textSize="18sp"
+    android:layout_centerHorizontal="true"
+    android:textSize="30sp"
     android:text="@string/lbl_1" />    
     
     <TextView xmlns:android="http://schemas.android.com/apk/res/android" android:id="@+id/text2"
