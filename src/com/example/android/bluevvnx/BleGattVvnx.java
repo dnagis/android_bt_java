@@ -39,7 +39,10 @@ public class BleGattVvnx  {
 	
 	//uuid du service: gatttool --> [30:AE:A4:04:C3:5A][LE]> primary
     private static final UUID SERVICE_UUID = UUID.fromString("000000ff-0000-1000-8000-00805f9b34fb");
-    //[30:AE:A4:04:C3:5A][LE]> characteristics
+    /**[30:AE:A4:04:C3:5A][LE]> characteristics
+    *...
+    *handle: 0x0029, char properties: 0x1a, char value handle: 0x002a, uuid: 0000ff01-0000-1000-8000-00805f9b34fb
+    *si je comprends bien quand tu vois ça avec gatttool faut que tu send la notif côté esp32 (esp_ble_gatts_send_indicate) avec attr_handle (arg 3) -> 0x002a**/
 	private static final UUID CHARACTERISTIC_PRFA_UUID = UUID.fromString("0000ff01-0000-1000-8000-00805f9b34fb");
 	
 	//sql
@@ -121,6 +124,7 @@ public class BleGattVvnx  {
 	//côté serveur esp32: esp_ble_gatts_send_indicate(0x03, 0, gl_profile_tab[PROFILE_A_APP_ID].char_handle, sizeof(notify_data), notify_data, false);
 	@Override
 	public void onCharacteristicChanged(BluetoothGatt gatt, BluetoothGattCharacteristic characteristic) {
+			Log.i(TAG, "Rx notif: onCharacteristicChanged");
 			byte[] data = characteristic.getValue();
 			parseMaData(data);	
 
