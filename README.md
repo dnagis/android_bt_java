@@ -23,7 +23,7 @@
 	 adb install out/target/product/mido/system/app/BlueVvnx/BlueVvnx.apk
 
  
- adb shell:
+ adb shell, mais quand uninstall réinstall juste après je n'ai pas besoin de le faire... chelou...
  dumpsys deviceidle whitelist +com.example.android.bluevvnx;\
  pm grant com.example.android.bluevvnx android.permission.ACCESS_FINE_LOCATION;\
  pm grant com.example.android.bluevvnx android.permission.ACCESS_COARSE_LOCATION 

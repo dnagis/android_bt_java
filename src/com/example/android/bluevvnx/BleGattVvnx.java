@@ -26,8 +26,8 @@ import android.content.ContentValues;
 
 public class BleGattVvnx  {
 	
-	//private final String BDADDR = "30:AE:A4:04:C3:5A"; //plaque de dev
-	private final String BDADDR = "30:AE:A4:07:84:16"; //breakout rouge pour tests doorlock
+	private final String BDADDR = "30:AE:A4:04:C3:5A"; //plaque de dev
+	//private final String BDADDR = "30:AE:A4:07:84:16"; //breakout rouge pour tests doorlock
 
 	private Context mContext;
 	private BlueActivity mBlueActivity;
