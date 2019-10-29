@@ -126,13 +126,21 @@ public class BleGattVvnx  {
 	public void onCharacteristicChanged(BluetoothGatt gatt, BluetoothGattCharacteristic characteristic) {
 			Log.i(TAG, "Rx notif: onCharacteristicChanged");
 			byte[] data = characteristic.getValue();
-			parseMaData(data);	
-
+			//parseBMX280(data);	
+			parseGPIO(data);
 			}	
 	};
 	  
+	//anémo (esp32: gatts_gpio) encodage dans 2 bytes
+	private void parseGPIO(byte[] data) {
+			int valeur = (data[0] & 0xFF) << 8 | (data[1] & 0xFF);
+			Log.i(TAG, "parseGPIO data: "+valeur);			
+			//Seulement si c'est via UI (BlueActivity), sinon si lancé à partir du service en adb shell->plante
+			mBlueActivity = (BlueActivity) mContext; //pour pouvoir appeler ses methods
+			mBlueActivity.updateText(String.valueOf(valeur));
+	 }
 
-	private void parseMaData(byte[] data) {
+	private void parseBMX280(byte[] data) {
 		long ts = System.currentTimeMillis()/1000;
 		//voir esp32_bmx280_gatts pour l'encodage des valeurs dans un array de bytes
 		double temp = (double)(data[0]+(data[1]/100.0));
