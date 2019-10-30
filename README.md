@@ -1,5 +1,9 @@
  # Bluetooth en java (BlueVvnx)
  
+ Fin octobre: Je laisse progressivement tomber l'entrée UI: ne plus trop y compter...
+ Multiples bdaddr possibles via menu déroulant (spinner), mais je dois avoir un pb de recyclage que j'ai la flemme de gérer: du coup 
+ workaround quand tu veux passer de l'un à l'autre: fermer appli puis la relancer
+ 
  2 Entrées possibles: via UI ou en shell via am start-service ***mais*** en 10/19 je veux faire des tests outdoor. Donc entrée = UI
  mais je veux aussi un foreground service. Donc attention je commente dans BlueService.onCreate() la partie qui lance bluetoothGATT, parce 
  que sinon: l'UI crée une instance bluetoothGATT, et ensuite le service pourrait aussi en créer une.

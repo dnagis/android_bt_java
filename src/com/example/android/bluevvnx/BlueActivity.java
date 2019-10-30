@@ -26,6 +26,7 @@ public class BlueActivity extends Activity implements OnItemSelectedListener {
 	
 	//private final String BDADDR = "30:AE:A4:04:C3:5A"; //plaque de dev
 	//private final String BDADDR = "30:AE:A4:07:84:16"; //breakout rouge pour tests doorlock
+	//private final String BDADDR = "30:AE:A4:45:C8:26"; //premier anémo
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
