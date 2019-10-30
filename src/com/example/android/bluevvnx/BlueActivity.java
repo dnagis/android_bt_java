@@ -72,8 +72,10 @@ public class BlueActivity extends Activity implements OnItemSelectedListener {
 	}
 	
 	public void updateText(String myString) {
+		Log.d(TAG, "updateText dans BlueActivity");
 		TextView textview1 = findViewById(R.id.text1);	
         textview1.setText(myString);
+        textview1.invalidate();
     }
     
     public void btn1_to_blue() {

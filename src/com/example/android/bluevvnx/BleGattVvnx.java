@@ -139,7 +139,7 @@ public class BleGattVvnx  {
 			int valeur = (data[0] & 0xFF) << 8 | (data[1] & 0xFF);
 			Log.i(TAG, "parseGPIO data: "+valeur);			
 			//Seulement si c'est via UI (BlueActivity), sinon si lancé à partir du service en adb shell->plante
-			mBlueActivity = (BlueActivity) mContext; //pour pouvoir appeler ses methods
+			//mBlueActivity = (BlueActivity) mContext; //pour pouvoir appeler ses methods
 			mBlueActivity.updateText(String.valueOf(valeur));
 			long ts = System.currentTimeMillis()/1000;
 			logCountEnBdd(ts, valeur);
@@ -169,8 +169,8 @@ public class BleGattVvnx  {
 		logBMX280EnBdd(temp, press, hum, ts);
 		
 		//Seulement si c'est via UI (BlueActivity), sinon si lancé à partir du service en adb shell->plante
-		mBlueActivity = (BlueActivity) mContext; //pour pouvoir appeler ses methods
-		mBlueActivity.updateText(String.valueOf(ts));
+		//mBlueActivity = (BlueActivity) mContext; //pour pouvoir appeler ses methods
+		//mBlueActivity.updateText(String.valueOf(ts));
 		}
 	
 	private void logBMX280EnBdd(double temp, double press, double hum, long ts) {
