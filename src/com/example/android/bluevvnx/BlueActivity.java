@@ -8,19 +8,28 @@ import android.content.Intent;
 
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Spinner;
+import android.widget.ArrayAdapter;
 import android.util.Log;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
+import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemSelectedListener;
 
-public class BlueActivity extends Activity {
+public class BlueActivity extends Activity implements OnItemSelectedListener {
 	
 	private static final String TAG = "BlueVvnx";
 	private BleGattVvnx mBleGattVvnx;
 	private Drawable default_btn;
+	private Spinner bdarr_spinner;
+	public String BDADDR;
 	
+	//private final String BDADDR = "30:AE:A4:04:C3:5A"; //plaque de dev
+	//private final String BDADDR = "30:AE:A4:07:84:16"; //breakout rouge pour tests doorlock
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
+		Log.d(TAG, "onCreate()");
         super.onCreate(savedInstanceState);
 
         View view = getLayoutInflater().inflate(R.layout.bluevvnxmain, null);
@@ -30,9 +39,15 @@ public class BlueActivity extends Activity {
         Button button1 = findViewById(R.id.button_1);
         default_btn = button1.getBackground();
         
+        //menu déroulant choix BDADDR
+        bdarr_spinner = (Spinner) findViewById(R.id.bdaddr_spinner);
+		ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this,
+		        R.array.bdaddr_array, android.R.layout.simple_spinner_item);
+		adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+		bdarr_spinner.setAdapter(adapter); 
+		bdarr_spinner.setOnItemSelectedListener(this);               
 
 		mBleGattVvnx = new BleGattVvnx();
-
     }
     
     public void ActionPressBouton_1(View v) {
@@ -70,6 +85,18 @@ public class BlueActivity extends Activity {
 	    Button button1 = findViewById(R.id.button_1);
 	    button1.setBackgroundDrawable(default_btn);
 	}
+	
+	public void onItemSelected(AdapterView<?> parent, View view,
+            int pos, long id) {
+        // An item was selected. You can retrieve the selected item using
+        // parent.getItemAtPosition(pos)
+        Log.d(TAG, "spinner selected: " + parent.getItemAtPosition(pos));
+        BDADDR = "30:AE:A4:" + parent.getItemAtPosition(pos);
+    }
+
+    public void onNothingSelected(AdapterView<?> parent) {
+        // Another interface callback
+    }
 	
 }
 

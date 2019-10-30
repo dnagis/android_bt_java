@@ -26,8 +26,7 @@ import android.content.ContentValues;
 
 public class BleGattVvnx  {
 	
-	private final String BDADDR = "30:AE:A4:04:C3:5A"; //plaque de dev
-	//private final String BDADDR = "30:AE:A4:07:84:16"; //breakout rouge pour tests doorlock
+
 
 	private Context mContext;
 	private BlueActivity mBlueActivity;
@@ -60,7 +59,11 @@ public class BleGattVvnx  {
 			return;
 		}
 		
-		BluetoothDevice monEsp = mBluetoothAdapter.getRemoteDevice(BDADDR);   
+		
+		mBlueActivity = (BlueActivity) mContext; //pour pouvoir accéder à ses fields
+		Log.d(TAG, "on crée un device avec adresse:" + mBlueActivity.BDADDR);
+		
+		BluetoothDevice monEsp = mBluetoothAdapter.getRemoteDevice(mBlueActivity.BDADDR);   
 		
 		if (mBluetoothGatt == null) {
 			Log.d(TAG, "pas encore de mBluetoothGatt: on la crée");
@@ -138,7 +141,22 @@ public class BleGattVvnx  {
 			//Seulement si c'est via UI (BlueActivity), sinon si lancé à partir du service en adb shell->plante
 			mBlueActivity = (BlueActivity) mContext; //pour pouvoir appeler ses methods
 			mBlueActivity.updateText(String.valueOf(valeur));
+			long ts = System.currentTimeMillis()/1000;
+			logCountEnBdd(ts, valeur);
 	 }
+	 
+	 private void logCountEnBdd(long ts, int count) {
+		//sqlite3 /data/data/com.example.android.bluevvnx/databases/data.db "select datetime(ALRMTIME, 'unixepoch','localtime'), COUNT from envdata;"
+		
+		maBDD = new BaseDeDonnees(mContext);
+		bdd = maBDD.getWritableDatabase();
+		ContentValues values = new ContentValues();
+		values.put("ALRMTIME", ts);
+		values.put("COUNT", count);
+		bdd.insert("envdata", null, values);
+	}
+	 
+	
 
 	private void parseBMX280(byte[] data) {
 		long ts = System.currentTimeMillis()/1000;
@@ -148,14 +166,14 @@ public class BleGattVvnx  {
         double press = (double)(data[3]+872+(data[4]/100.0));
         double hum = (double)(data[5]+(data[6]/100.0));		
 		Log.i(TAG, "recup data de la characteristic: " + temp + " " + press + " " + hum + " @" + ts);
-		logMoiEnBdd(temp, press, hum, ts);
+		logBMX280EnBdd(temp, press, hum, ts);
 		
 		//Seulement si c'est via UI (BlueActivity), sinon si lancé à partir du service en adb shell->plante
 		mBlueActivity = (BlueActivity) mContext; //pour pouvoir appeler ses methods
 		mBlueActivity.updateText(String.valueOf(ts));
 		}
 	
-	private void logMoiEnBdd(double temp, double press, double hum, long ts) {
+	private void logBMX280EnBdd(double temp, double press, double hum, long ts) {
 		//sqlite3 /data/data/com.example.android.bluevvnx/databases/data.db "select datetime(ALRMTIME, 'unixepoch','localtime'), TEMP, PRES, HUM from envdata;"
 		
 		maBDD = new BaseDeDonnees(mContext);
