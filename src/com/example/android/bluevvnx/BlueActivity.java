@@ -91,8 +91,7 @@ public class BlueActivity extends Activity implements OnItemSelectedListener {
 	
 	public void onItemSelected(AdapterView<?> parent, View view,
             int pos, long id) {
-        // An item was selected. You can retrieve the selected item using
-        // parent.getItemAtPosition(pos)
+        // An item was selected. You can retrieve the selected item using parent.getItemAtPosition(pos)
         Log.d(TAG, "spinner selected: " + parent.getItemAtPosition(pos));
         //BDADDR = "30:AE:A4:" + parent.getItemAtPosition(pos);
         BDADDR = "" + parent.getItemAtPosition(pos);

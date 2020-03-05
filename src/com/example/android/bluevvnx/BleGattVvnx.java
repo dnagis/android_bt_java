@@ -129,8 +129,8 @@ public class BleGattVvnx  {
 	public void onCharacteristicChanged(BluetoothGatt gatt, BluetoothGattCharacteristic characteristic) {
 			Log.i(TAG, "Rx notif: onCharacteristicChanged");
 			byte[] data = characteristic.getValue();
-			//parseBMX280(data);	
-			parseGPIO(data);
+			parseBMX280(data);	
+			//parseGPIO(data);
 			}	
 	};
 	  
