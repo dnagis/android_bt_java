@@ -69,6 +69,10 @@ public class BlueActivity extends Activity implements OnItemSelectedListener {
 		stopService(new Intent(this, BlueService.class));
 	}
 	
+	public void ActionPressBouton_5(View v) {
+		Log.d(TAG, "press bouton 5");
+	}
+	
 	public void updateText(String myString) {
 		Log.d(TAG, "updateText dans BlueActivity");
 		TextView textview1 = findViewById(R.id.text1);	
@@ -88,6 +92,7 @@ public class BlueActivity extends Activity implements OnItemSelectedListener {
 	
 	public void onItemSelected(AdapterView<?> parent, View view,
             int pos, long id) {
+		//on passe ici au startup donc la BDADDR est set ici même sans rien faire		
         // An item was selected. You can retrieve the selected item using parent.getItemAtPosition(pos)
         Log.d(TAG, "spinner selected: " + parent.getItemAtPosition(pos));
         BDADDR = "" + parent.getItemAtPosition(pos);

@@ -1,7 +1,7 @@
  # Bluetooth en java (BlueVvnx)
  
  BDADDR:
-	 nouvelle bdaddr: juste modifier res/values/strings.xml -> la première de la liste sera prise au démarrage
+	 nouvelle bdaddr: juste modifier res/values/strings.xml -> la première de la liste sera prise au démarrage dans BlueActivity à onItemSelected() même sans rien faire
 	 Multiples bdaddr possibles via menu déroulant (spinner), mais je dois avoir un pb de recyclage que j'ai la flemme de gérer: du coup 
 	 workaround quand tu veux passer de l'un à l'autre: fermer appli puis la relancer
 	 
