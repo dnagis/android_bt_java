@@ -24,8 +24,8 @@
     <string name="txt_btn_3">Disconnect()</string>
     <string name="txt_btn_4">Stop svc</string>
 	<string-array name="bdaddr_array">
+	<item>30:AE:A4:04:C3:5A</item>	
 	<item>24:62:AB:D7:6E:E6</item>
-	<item>30:AE:A4:04:C3:5A</item>
 	<item>24:62:AB:D7:2D:42</item>	
 </string-array>
 </resources>

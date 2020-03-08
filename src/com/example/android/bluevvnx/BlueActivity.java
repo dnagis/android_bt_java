@@ -24,9 +24,6 @@ public class BlueActivity extends Activity implements OnItemSelectedListener {
 	private Spinner bdarr_spinner;
 	public String BDADDR;
 	
-	//private final String BDADDR = "24:62:AB:D7:2D:42"; //anemo
-	//private final String BDADDR = "30:AE:A4:07:84:16"; //breakout rouge pour tests doorlock
-	//private final String BDADDR = "30:AE:A4:45:C8:26"; //premier anémo
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -93,7 +90,6 @@ public class BlueActivity extends Activity implements OnItemSelectedListener {
             int pos, long id) {
         // An item was selected. You can retrieve the selected item using parent.getItemAtPosition(pos)
         Log.d(TAG, "spinner selected: " + parent.getItemAtPosition(pos));
-        //BDADDR = "30:AE:A4:" + parent.getItemAtPosition(pos);
         BDADDR = "" + parent.getItemAtPosition(pos);
     }
 

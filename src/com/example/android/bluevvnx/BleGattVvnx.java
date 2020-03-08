@@ -31,7 +31,7 @@ public class BleGattVvnx  {
 	private final String TAG = "BlueVvnx";
 	
 	
-	//uuid du service: gatttool --> [30:AE:A4:04:C3:5A][LE]> primary
+	//uuid du service: pour le trouver: gatttool --> [30:AE:A4:04:C3:5A][LE]> primary
     private static final UUID SERVICE_UUID = UUID.fromString("000000ff-0000-1000-8000-00805f9b34fb");
     /**[30:AE:A4:04:C3:5A][LE]> characteristics
     *...
