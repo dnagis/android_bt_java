@@ -11,19 +11,22 @@
 	 adb install out/target/product/mido/system/app/BlueVvnx/BlueVvnx.apk
 
  
- adb shell, mais quand uninstall réinstall juste après je n'ai pas besoin de le faire... chelou...
+ adb shell, la première fois seulement! Inutile de se faire chier à le refaire chaque fois!
  dumpsys deviceidle whitelist +com.example.android.bluevvnx;\
  pm grant com.example.android.bluevvnx android.permission.ACCESS_FINE_LOCATION;\
  pm grant com.example.android.bluevvnx android.permission.ACCESS_COARSE_LOCATION 
  
- am start-service com.example.android.bluevvnx/.BlueService  
+ 
+ 
+ 
+ 
  
  logcat -s BlueVvnx
 
  
 
  
- 2 Entrées possibles: via UI ou en shell via am start-service 
+ 2 Entrées possibles: via UI ou en shell via am start-service com.example.android.bluevvnx/.BlueService  
  Atention si tu utilises le service: je commente dans BlueService.onCreate() la partie qui lance bluetoothGATT, parce 
  que sinon: l'UI crée une instance bluetoothGATT, et ensuite le service pourrait aussi en créer une.
  

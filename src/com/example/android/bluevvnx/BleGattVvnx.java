@@ -217,13 +217,19 @@ public class BleGattVvnx  {
 		bdd.insert("envdata", null, values);
 	}
 	
+	//Read char, l'équivalent de gatttool -b <bdaddr> --char-read -a 0x002a
 	public void lireCharacteristic() {
-		Log.i(TAG, "ma dummy fct dans BleGattVvnx");		
+		Log.i(TAG, "lireCharacteristic dans BleGattVvnx");		
 		mBluetoothGatt.readCharacteristic(mCharacteristic); //mCharacteristic est construite dans la BluetoothGattCallback onServicesDiscovered()
 	}
 	
-	
-	
+	//Write char, l'équivalent de gatttool -b <bdaddr> --char-write-req -a 0x002e -n 0203ffabef
+	public void ecrireCharacteristic() {
+		Log.i(TAG, "ecrireCharacteristic dans BleGattVvnx");	
+		//mCharacteristic est construite dans la BluetoothGattCallback onServicesDiscovered(), c'est seulement sa value que je veux modifier
+		mCharacteristic.setValue("43.458900,4.549026");	//ou "hello" of course...		
+		mBluetoothGatt.writeCharacteristic(mCharacteristic); 
+	}
 	
 
 
