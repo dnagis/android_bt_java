@@ -71,6 +71,7 @@ public class BlueActivity extends Activity implements OnItemSelectedListener {
 	
 	public void ActionPressBouton_5(View v) {
 		Log.d(TAG, "press bouton 5");
+		mBleGattVvnx.lireCharacteristic();
 	}
 	
 	public void updateText(String myString) {
