@@ -16,16 +16,8 @@
  pm grant com.example.android.bluevvnx android.permission.ACCESS_FINE_LOCATION;\
  pm grant com.example.android.bluevvnx android.permission.ACCESS_COARSE_LOCATION 
  
- 
- 
- 
- 
- 
  logcat -s BlueVvnx
 
- 
-
- 
  2 Entrées possibles: via UI ou en shell via am start-service com.example.android.bluevvnx/.BlueService  
  Atention si tu utilises le service: je commente dans BlueService.onCreate() la partie qui lance bluetoothGATT, parce 
  que sinon: l'UI crée une instance bluetoothGATT, et ensuite le service pourrait aussi en créer une.
@@ -39,7 +31,14 @@
 	bluetooth/bluedroid/ble/gatt_server = point de départ, pour la logique bluetooth voir: morphotox/bluetooth
 	https://github.com/dnagis/esp32_bmx280_gatts (le gros de mon travail)
 	
-
+ "Cronability"
+ Premier run: bouton qui connectGatt, et l'esp32 lançait régulièrement des esp_ble_gatts_send_indicate, qui arrivaient dans onCharacteristicChanged()
+	problème de persistance au bout de qqes heures (deux ou trois je dirais). L'esp32 sendait des notifs toutes les 10 secondes. La batterie de l'esp32
+	fonctionnait. L'UI de BlueVvnx était noire. Je propose donc:
+ Deuxième système à faire:
+	Alarm: Bouton -> repeating alarm, au bout de laquelle un service, qui connecte, et dans une callback récupère de la data (char read), puis disconnect.
+	Voir si persistance. Combien de temps?
+	
  
  
   
