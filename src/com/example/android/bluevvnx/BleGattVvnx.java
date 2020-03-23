@@ -187,7 +187,15 @@ public class BleGattVvnx  {
 		bdd.insert("envdata", null, values);
 	}
 	 
-	
+	/**
+	 * 
+	 * ça ne peut pas passer: les bytes en java peuvent pas contenir la valeur de la pression
+	 * il faut faire comme alarmGatt, j'ai la flemme de changer ce soir. Mais ne t'étonnes pas si tu as
+	 * des pressions à 700-800 en java: la valeur récupérée est négative (-144+872)
+	 * 
+	 * 
+	 * 
+	 * **/
 
 	private void parseBMX280(byte[] data) {
 		long ts = System.currentTimeMillis()/1000;
