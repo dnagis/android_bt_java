@@ -1,5 +1,11 @@
 package vvnx.bluevvnx;
 
+import android.app.Service;
+import android.util.Log;
+import android.os.IBinder;
+import android.os.Handler;
+import android.content.Intent;
+
 import android.content.Context;
 import android.util.Log;
 
@@ -13,22 +19,18 @@ import android.bluetooth.BluetoothProfile;
 
 import java.util.UUID;
 
-import android.view.View;
 
-//sql
-import android.database.sqlite.SQLiteDatabase;
-import android.content.ContentValues;
 
-public class BleGattVvnx  {
+public class GattService extends Service  {
 	
 
 
 	private Context mContext;
-	private BlueActivity mBlueActivity;
 	private BluetoothGatt mBluetoothGatt = null;
 	private BluetoothAdapter mBluetoothAdapter = null;	
 	private BluetoothGattCharacteristic mCharacteristic = null;	
 	private final String TAG = "BlueVvnx";
+	private static final String BDADDR = "30:AE:A4:04:C3:5A"; //Plaque de dev
 	
 	
 	/**	Correspondance avec l'esp32: 
@@ -73,15 +75,23 @@ public class BleGattVvnx  {
 	 * si je comprends bien quand tu vois ça avec gatttool faut que tu send la notif côté esp32 (esp_ble_gatts_send_indicate) avec attr_handle (arg 3) -> 0x002a**/
 	private static final UUID CHARACTERISTIC_PRFA_UUID = UUID.fromString("0000ff01-0000-1000-8000-00805f9b34fb");
 	
-	//sql
-    private BaseDeDonnees maBDD;
-    private SQLiteDatabase bdd;
+	@Override
+	public int onStartCommand(Intent intent, int flags, int startId) {
+		Log.d(TAG, "onStartCommand()");
+		return START_NOT_STICKY;
+	}
+	
+	@Override
+	public IBinder onBind(Intent intent) {
+      // We don't provide binding, so return null
+      return null;
+	}
 	
 	 
-	void connectmGatt(Context rContext){
-		mContext = rContext;
+	void connectmGatt(){
 		
-		final BluetoothManager bluetoothManager = (BluetoothManager)mContext.getSystemService(mContext.BLUETOOTH_SERVICE);	
+		
+		final BluetoothManager bluetoothManager = (BluetoothManager)getSystemService(Context.BLUETOOTH_SERVICE);	
 		mBluetoothAdapter = bluetoothManager.getAdapter();	
 		if (mBluetoothAdapter == null) {
 			Log.d(TAG, "fail à la récup de l'adapter");
@@ -89,10 +99,10 @@ public class BleGattVvnx  {
 		}
 		
 		
-		mBlueActivity = (BlueActivity) mContext; //pour pouvoir accéder à ses fields
-		Log.d(TAG, "on crée un device avec adresse:" + mBlueActivity.BDADDR);
+
+		Log.d(TAG, "on crée un device avec adresse:" + BDADDR);
 		
-		BluetoothDevice monEsp = mBluetoothAdapter.getRemoteDevice(mBlueActivity.BDADDR);   
+		BluetoothDevice monEsp = mBluetoothAdapter.getRemoteDevice(BDADDR);   
 		
 		if (mBluetoothGatt == null) {
 			Log.d(TAG, "pas encore de mBluetoothGatt: on la crée");
@@ -123,14 +133,14 @@ public class BleGattVvnx  {
 	private final BluetoothGattCallback gattCallback = new BluetoothGattCallback() {
 	@Override
 	public void onConnectionStateChange(BluetoothGatt gatt, int status, int newState) {
-		mBlueActivity = (BlueActivity) mContext; //pour pouvoir appeler ses methods
+
 		if (newState == BluetoothProfile.STATE_CONNECTED) {
 			Log.i(TAG, "Connected to GATT server.");					
-			mBlueActivity.btn1_to_blue();
+
 			gatt.discoverServices();
 		} else if (newState == BluetoothProfile.STATE_DISCONNECTED) {
 			Log.i(TAG, "Disconnected from GATT server.");
-			mBlueActivity.btn1_to_def();
+
 		}
         //si je mets pas ça  j'ai n+1 onCharacteristicChanged() à chaque passage (nouvelle instance BluetoothGattCallback?)
 		//***MAIS***
@@ -160,71 +170,12 @@ public class BleGattVvnx  {
 	public void onCharacteristicChanged(BluetoothGatt gatt, BluetoothGattCharacteristic characteristic) {
 			Log.i(TAG, "Rx notif: onCharacteristicChanged");
 			byte[] data = characteristic.getValue();
-			parseBMX280(data);	
+			//parseBMX280(data);	//voir UtilsVvnx.java désormais
 			//parseGPIO(data);
 			}	
 	};
 	  
-	//anémo (esp32: gatts_gpio) encodage dans 2 bytes
-	private void parseGPIO(byte[] data) {
-			int valeur = (data[0] & 0xFF) << 8 | (data[1] & 0xFF);
-			Log.i(TAG, "parseGPIO data: "+valeur);			
-			//Seulement si c'est via UI (BlueActivity), sinon si lancé à partir du service en adb shell->plante
-			//mBlueActivity = (BlueActivity) mContext; //pour pouvoir appeler ses methods
-			mBlueActivity.updateText(String.valueOf(valeur));
-			long ts = System.currentTimeMillis()/1000;
-			logCountEnBdd(ts, valeur);
-	 }
-	 
-	 private void logCountEnBdd(long ts, int count) {
-		//sqlite3 /data/data/com.example.android.bluevvnx/databases/data.db "select datetime(ALRMTIME, 'unixepoch','localtime'), COUNT from envdata;"
 		
-		maBDD = new BaseDeDonnees(mContext);
-		bdd = maBDD.getWritableDatabase();
-		ContentValues values = new ContentValues();
-		values.put("ALRMTIME", ts);
-		values.put("COUNT", count);
-		bdd.insert("envdata", null, values);
-	}
-	 
-	/**
-	 * 
-	 * ça ne peut pas passer: les bytes en java peuvent pas contenir la valeur de la pression
-	 * il faut faire comme alarmGatt, j'ai la flemme de changer ce soir. Mais ne t'étonnes pas si tu as
-	 * des pressions à 700-800 en java: la valeur récupérée est négative (-144+872)
-	 * 
-	 * 
-	 * 
-	 * **/
-
-	private void parseBMX280(byte[] data) {
-		long ts = System.currentTimeMillis()/1000;
-		//voir esp32_bmx280_gatts pour l'encodage des valeurs dans un array de bytes
-		double temp = (double)(data[0]+(data[1]/100.0));
-        if (data[2]==0) temp=-temp;
-        double press = (double)(data[3]+872+(data[4]/100.0));
-        double hum = (double)(data[5]+(data[6]/100.0));		
-		Log.i(TAG, "recup data de la characteristic: " + temp + " " + press + " " + hum + " @" + ts);
-		logBMX280EnBdd(temp, press, hum, ts);
-		
-		//Seulement si c'est via UI (BlueActivity), sinon si lancé à partir du service en adb shell->plante
-		//mBlueActivity = (BlueActivity) mContext; //pour pouvoir appeler ses methods
-		//mBlueActivity.updateText(String.valueOf(ts));
-		}
-	
-	private void logBMX280EnBdd(double temp, double press, double hum, long ts) {
-		//sqlite3 /data/data/com.example.android.bluevvnx/databases/data.db "select datetime(ALRMTIME, 'unixepoch','localtime'), TEMP, PRES, HUM from envdata;"
-		
-		maBDD = new BaseDeDonnees(mContext);
-		bdd = maBDD.getWritableDatabase();
-		ContentValues values = new ContentValues();
-		values.put("ALRMTIME", ts);
-		values.put("TEMP", temp);
-		values.put("PRES", press);
-		values.put("HUM", hum);
-		bdd.insert("envdata", null, values);
-	}
-	
 	//Read char, l'équivalent de gatttool -b <bdaddr> --char-read -a 0x002a
 	public void lireCharacteristic() {
 		Log.i(TAG, "lireCharacteristic dans BleGattVvnx");		

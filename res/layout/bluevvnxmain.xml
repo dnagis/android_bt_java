@@ -28,13 +28,6 @@
 	android:text="@string/txt_btn_1"
 	android:onClick="ActionPressBouton_1" />
 
-	<Button
-	android:id="@+id/button_2"
-	android:layout_height="wrap_content"
-	android:layout_width="wrap_content"
-	android:layout_below="@+id/button_1"
-	android:text="@string/txt_btn_2"
-	android:onClick="ActionPressBouton_2" />
 	
 	<Button
 	android:id="@+id/button_3"
@@ -43,15 +36,7 @@
 	android:layout_alignParentRight="true"
 	android:text="@string/txt_btn_3"
 	android:onClick="ActionPressBouton_3" />
-	
-	<Button
-	android:id="@+id/button_4"
-	android:layout_height="wrap_content"
-	android:layout_width="wrap_content"
-	android:layout_alignParentRight="true"
-	android:layout_below="@+id/button_3"
-	android:text="@string/txt_btn_4"
-	android:onClick="ActionPressBouton_4" />
+
 	
 	<Button
 	android:id="@+id/button_5"

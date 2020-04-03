@@ -40,7 +40,7 @@ import android.content.IntentFilter;
 
 
 
-public class BlueService extends Service {
+public class BlueService_old extends Service {
 	
 	private static final String TAG = "BlueVvnx";
 	private static final String BDADDR = "30:AE:A4:04:C3:5A"; //Plaque de dev
@@ -67,39 +67,9 @@ public class BlueService extends Service {
     @Override
     public void onCreate() {
 		Log.d(TAG, "onCreate");	
-		
-		//Register un broadcast receiver
-		/*BroadcastReceiver br = new Receiver();
-		IntentFilter filter = new IntentFilter(BluetoothDevice.ACTION_BOND_STATE_CHANGED);
-		this.registerReceiver(br, filter);*/
-		
-		// Get local Bluetooth adapter
-		//mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter(); //serait l'ancienne version selon BluetoothAdapter.java
-		/*final BluetoothManager bluetoothManager = (BluetoothManager) getSystemService(this.BLUETOOTH_SERVICE);
-		mBluetoothAdapter = bluetoothManager.getAdapter();
-		if (mBluetoothAdapter == null) {
-			Log.d(TAG, "fail à la récup de l'adapter");
-			return;
-		}*/
-        
-        //scan: historiquement: 1ère fonction implémentée dans ce projet -> je faisais tout en advertise et scan       
-        /*mBluetoothLeScanner = mBluetoothAdapter.getBluetoothLeScanner();        
-        if (mBluetoothLeScanner == null) {
-            Log.d(TAG, "fail à la récup du LeScanner");
-            return;
-        } 		
-		scanLeDevice();*/
-        
-         
-        //Gatt --> BleGattVvnx.java 
-        //commenter si tu ne te sers que de l'UI: je veux pas trois tonnes d'instances de BluetoothGATT accross mon appli
-        //BleGattVvnx mBleGattVvnx = new BleGattVvnx();
-        //mBleGattVvnx.connectmGatt(this);			
-
     }
     
-    
-    //Les 3 fonctions indispensables pour extends Service
+
     
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
