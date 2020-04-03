@@ -1,4 +1,4 @@
-package com.example.android.bluevvnx;
+package vvnx.bluevvnx;
 
 import android.app.Activity;
 import android.os.Bundle;

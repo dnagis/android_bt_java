@@ -23,7 +23,7 @@
 
 
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.example.android.bluevvnx">
+    package="vvnx.bluevvnx">
     
     <!-- si je mets rien il target 27 et ca plante à l'install sur le moto X non rooté 
     INSTALL_FAILED_OLDER_SDK Requires newer sdk version #27 (current version is #26)] -->
