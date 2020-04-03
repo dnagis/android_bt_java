@@ -1,15 +1,18 @@
- # Bluetooth en java (BlueVvnx)
+# Bluetooth Gatt en java (BlueVvnx)
  
- BDADDR:
+## BDADDR:
 	 nouvelle bdaddr: juste modifier res/values/strings.xml -> la première de la liste sera prise au démarrage dans BlueActivity à onItemSelected() même sans rien faire
 	 Multiples bdaddr possibles via menu déroulant (spinner), mais je dois avoir un pb de recyclage que j'ai la flemme de gérer: du coup 
 	 workaround quand tu veux passer de l'un à l'autre: fermer appli puis la relancer
 	 
- routine aosp:
+## routine aosp:
 	 make BlueVvnx 
 	 adb uninstall com.example.android.bluevvnx 
 	 adb install out/target/product/mido/system/app/BlueVvnx/BlueVvnx.apk
 
+# repo / rsync
+Avril 2020 pendant le travail pas de push tout le temps, enovi sur kimsufi c'est plus rapide:
+rsync -azvhu /initrd/mnt/dev_save/android/lineageOS/sources/development/samples/BlueVvnx ks:/home/android
  
  adb shell, la première fois seulement! Inutile de se faire chier à le refaire chaque fois!
  dumpsys deviceidle whitelist +com.example.android.bluevvnx;\
