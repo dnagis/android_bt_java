@@ -9,6 +9,11 @@ import android.content.Intent;
 import android.content.Context;
 import android.util.Log;
 
+import android.os.Message;
+import android.os.Messenger;
+import android.os.Handler;
+import android.os.RemoteException;
+
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothManager;
 import android.bluetooth.BluetoothDevice;
@@ -17,20 +22,28 @@ import android.bluetooth.BluetoothGattCallback;
 import android.bluetooth.BluetoothGattCharacteristic;
 import android.bluetooth.BluetoothProfile;
 
+import android.app.Notification;
+import android.app.NotificationManager;
+import android.app.NotificationChannel;
+
 import java.util.UUID;
 
 
 
 public class GattService extends Service  {
-	
 
-
-	private Context mContext;
+	private Notification mNotification;
 	private BluetoothGatt mBluetoothGatt = null;
 	private BluetoothAdapter mBluetoothAdapter = null;	
 	private BluetoothGattCharacteristic mCharacteristic = null;	
 	private final String TAG = "BlueVvnx";
 	private static final String BDADDR = "30:AE:A4:04:C3:5A"; //Plaque de dev
+	
+
+	public static final int MSG_REG_CLIENT = 200;//enregistrer le client dans le service
+	public static final int MSG_STOP = 400;
+	public static final int MSG_BT_CONNECTED = 500;
+	public static final int MSG_BT_DISCONNECTED = 600;
 	
 	
 	/**	Correspondance avec l'esp32: 
@@ -75,30 +88,84 @@ public class GattService extends Service  {
 	 * si je comprends bien quand tu vois ça avec gatttool faut que tu send la notif côté esp32 (esp_ble_gatts_send_indicate) avec attr_handle (arg 3) -> 0x002a**/
 	private static final UUID CHARACTERISTIC_PRFA_UUID = UUID.fromString("0000ff01-0000-1000-8000-00805f9b34fb");
 	
+	
+	
+	
+	
+	/**
+	 * système IPC Messenger / Handler basé sur le Binder
+	 */
+	  
+	private Messenger mClient; // l'activité
+
+	private class IncomingHandler extends Handler {
+        
+
+        @Override
+        public void handleMessage(Message msg) {
+            switch (msg.what) {
+				//REG_CLIENT: juste un trick pour avoir un messenger vers l'activité (=client)
+				case MSG_REG_CLIENT:
+                    Log.d(TAG, "Service: handleMessage() -> REG_CLIENT");
+                    mClient = msg.replyTo;
+                    break;
+				case MSG_STOP:
+                    Log.d(TAG, "Service: handleMessage() -> STOP");
+                    //shutDown();
+                    break;                    
+                default:
+                    super.handleMessage(msg);
+            }
+        }
+    }
+
+	 
+	
+	final Messenger mMessenger = new Messenger(new IncomingHandler()); //le messenger local
+	
+	
 	@Override
 	public int onStartCommand(Intent intent, int flags, int startId) {
 		Log.d(TAG, "onStartCommand()");
+		//Foreground
+        int importance = NotificationManager.IMPORTANCE_DEFAULT;
+        String CHANNEL_ID = "MA_CHAN_ID";
+        NotificationChannel channel = new NotificationChannel(CHANNEL_ID, "ma_channel", importance);
+        channel.setSound(null, null);
+        channel.setDescription("android_fait_chier_avec_sa_channel");
+        NotificationManager notificationManager = getSystemService(NotificationManager.class);
+        notificationManager.createNotificationChannel(channel);
+		
+        mNotification = new Notification.Builder(this, CHANNEL_ID)  //  The builder requires the context
+                .setSmallIcon(R.drawable.icon)  // the status icon
+                .setTicker("NotifText")  // the status text
+                .setContentTitle("BlueVvnx")  // the label of the entry
+                .setContentText("BlueVvnx")  // the contents of the entry
+                .build();	
+			
+		startForeground(1, mNotification);
+		
+		//Bluetooth
+		connectmGatt();
+		
 		return START_NOT_STICKY;
 	}
 	
 	@Override
 	public IBinder onBind(Intent intent) {
-      // We don't provide binding, so return null
-      return null;
+      return mMessenger.getBinder(); //envoyé vers onServiceConnected() dans l'activité
 	}
 	
 	 
-	void connectmGatt(){
-		
+	void connectmGatt(){	
 		
 		final BluetoothManager bluetoothManager = (BluetoothManager)getSystemService(Context.BLUETOOTH_SERVICE);	
 		mBluetoothAdapter = bluetoothManager.getAdapter();	
+		
 		if (mBluetoothAdapter == null) {
 			Log.d(TAG, "fail à la récup de l'adapter");
 			return;
-		}
-		
-		
+		}		
 
 		Log.d(TAG, "on crée un device avec adresse:" + BDADDR);
 		
@@ -106,7 +173,7 @@ public class GattService extends Service  {
 		
 		if (mBluetoothGatt == null) {
 			Log.d(TAG, "pas encore de mBluetoothGatt: on la crée");
-			mBluetoothGatt = monEsp.connectGatt(mContext, true, gattCallback);
+			mBluetoothGatt = monEsp.connectGatt(this, true, gattCallback);
 		} else {
 			mBluetoothGatt.connect();
 		}

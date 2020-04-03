@@ -17,13 +17,13 @@
 <resources>
 	<string name="app_name">BlueVvnx</string>
 	<string name="lblsrvc">lblsrvc</string>
+	
     <string name="lbl_1">label_1</string>
     <string name="lbl_2">label_2</string>
-    <string name="txt_btn_1">Connect()</string>
-
-    <string name="txt_btn_3">Disconnect()</string>
-
-    <string name="txt_btn_5">Action()</string>
+    
+    <string name="txt_btn_1">Start()</string>
+    <string name="txt_btn_2">btn_2</string>
+    <string name="txt_btn_3">btn_3</string>
 
 
 </resources>
