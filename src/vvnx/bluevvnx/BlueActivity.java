@@ -94,10 +94,12 @@ public class BlueActivity extends Activity {
             switch (msg.what) {
                 case GattService.MSG_BT_CONNECTED:
                     Log.d(TAG, "Activity: handler -> MSG_BT_CONNECTED");
+                    btn1_to_blue();
                     break;
                 case GattService.MSG_BT_DISCONNECTED:
                     Log.d(TAG, "Activity: handler -> MSG_BT_DISCONNECTED");
-                     break;
+                    btn1_to_def();
+                    break;
                 default:
                     super.handleMessage(msg);
             }

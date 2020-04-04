@@ -7,7 +7,7 @@
 	 
 ## routine aosp:
 	 make BlueVvnx 
-	 adb uninstall com.example.android.bluevvnx 
+	 adb uninstall vvnx.bluevvnx 
 	 adb install out/target/product/mido/system/app/BlueVvnx/BlueVvnx.apk
 
 # repo / rsync

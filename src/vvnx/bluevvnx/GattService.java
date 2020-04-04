@@ -202,12 +202,23 @@ public class GattService extends Service  {
 	public void onConnectionStateChange(BluetoothGatt gatt, int status, int newState) {
 
 		if (newState == BluetoothProfile.STATE_CONNECTED) {
-			Log.i(TAG, "Connected to GATT server.");					
+			Log.i(TAG, "Connected to GATT server.");
+			Message msg = Message.obtain(null, MSG_BT_CONNECTED);
+			try {
+                mClient.send(msg);
+            } catch (RemoteException e) {
+                 e.printStackTrace();
+            }					
 
 			gatt.discoverServices();
 		} else if (newState == BluetoothProfile.STATE_DISCONNECTED) {
 			Log.i(TAG, "Disconnected from GATT server.");
-
+			Message msg = Message.obtain(null, MSG_BT_DISCONNECTED);
+			try {
+                mClient.send(msg);
+            } catch (RemoteException e) {
+                 e.printStackTrace();
+            }
 		}
         //si je mets pas ça  j'ai n+1 onCharacteristicChanged() à chaque passage (nouvelle instance BluetoothGattCallback?)
 		//***MAIS***
@@ -253,8 +264,8 @@ public class GattService extends Service  {
 	public void ecrireCharacteristic() {
 		Log.i(TAG, "ecrireCharacteristic dans BleGattVvnx");	
 		//mCharacteristic est construite dans la BluetoothGattCallback onServicesDiscovered(), c'est seulement sa value que je veux modifier
-		mCharacteristic.setValue("43.458900,4.549026");	//ou "hello" of course...		
-		mBluetoothGatt.writeCharacteristic(mCharacteristic); 
+		//mCharacteristic.setValue("43.458900,4.549026");	//ou "hello" of course...		
+		//mBluetoothGatt.writeCharacteristic(mCharacteristic); 
 	}
 	
 
