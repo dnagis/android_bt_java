@@ -21,10 +21,26 @@ logcat -s BlueVvnx
 
 
 ## ToDo
-2 connexions: possible?
 
 
- 
+
+
+
+
+
+
+## 2 connexions simultanées: possible sans difficulté:
+-après récupération d'un adapter chez le bluetoothManager:
+-tu crées 2 bluetooth devices avec getRemoteDevice(BDADDR_[1/2])
+-tu connectGatt() sur chacune d'entre elles. Elles peuvent sharer la même BluetoothGattCallback(). tu distingues dans la cb avec
+	gatt.getDevice().getAddress() 
+
+
+
+
+
+
+
 
 ## Old
  

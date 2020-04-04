@@ -33,11 +33,13 @@ import java.util.UUID;
 public class GattService extends Service  {
 
 	private Notification mNotification;
-	private BluetoothGatt mBluetoothGatt = null;
+	private BluetoothGatt mBluetoothGatt_1 = null;
+	private BluetoothGatt mBluetoothGatt_2 = null;
 	private BluetoothAdapter mBluetoothAdapter = null;	
 	private BluetoothGattCharacteristic mCharacteristic = null;	
 	private final String TAG = "BlueVvnx";
-	private static final String BDADDR = "30:AE:A4:04:C3:5A"; //Plaque de dev
+	private static final String BDADDR_1 = "30:AE:A4:04:C3:5A"; //Plaque de dev ESP_NOIR
+	private static final String BDADDR_2 = "30:AE:A4:05:0C:BE"; //Plaque de dev ESP_DEV_2
 	
 
 	public static final int MSG_REG_CLIENT = 200;//enregistrer le client dans le service
@@ -167,23 +169,32 @@ public class GattService extends Service  {
 			return;
 		}		
 
-		Log.d(TAG, "on crée un device avec adresse:" + BDADDR);
+		Log.d(TAG, "on crée un device avec adresse:" + BDADDR_1);
 		
-		BluetoothDevice monEsp = mBluetoothAdapter.getRemoteDevice(BDADDR);   
+		BluetoothDevice monEsp_1 = mBluetoothAdapter.getRemoteDevice(BDADDR_1);   
 		
-		if (mBluetoothGatt == null) {
-			Log.d(TAG, "pas encore de mBluetoothGatt: on la crée");
-			mBluetoothGatt = monEsp.connectGatt(this, true, gattCallback);
+		if (mBluetoothGatt_1 == null) {
+			Log.d(TAG, "pas encore de mBluetoothGatt_1: on la crée");
+			mBluetoothGatt_1 = monEsp_1.connectGatt(this, true, gattCallback);
 		} else {
-			mBluetoothGatt.connect();
+			mBluetoothGatt_1.connect();
 		}
-		     
 		
+		Log.d(TAG, "on crée un device avec adresse:" + BDADDR_2);
+		
+		BluetoothDevice monEsp_2 = mBluetoothAdapter.getRemoteDevice(BDADDR_2);   
+		
+		if (mBluetoothGatt_2 == null) {
+			Log.d(TAG, "pas encore de mBluetoothGatt_2: on la crée");
+			mBluetoothGatt_2 = monEsp_2.connectGatt(this, true, gattCallback);
+		} else {
+			mBluetoothGatt_2.connect();
+		}
 
 	}
 	
 	void disconnectmGatt(){
-		mBluetoothGatt.disconnect();
+		mBluetoothGatt_1.disconnect();
 	}
 	
 	/**
@@ -202,7 +213,7 @@ public class GattService extends Service  {
 	public void onConnectionStateChange(BluetoothGatt gatt, int status, int newState) {
 
 		if (newState == BluetoothProfile.STATE_CONNECTED) {
-			Log.i(TAG, "Connected to GATT server.");
+			Log.i(TAG, "Connected to GATT server addr=" + gatt.getDevice().getAddress());
 			Message msg = Message.obtain(null, MSG_BT_CONNECTED);
 			try {
                 mClient.send(msg);
@@ -257,7 +268,7 @@ public class GattService extends Service  {
 	//Read char, l'équivalent de gatttool -b <bdaddr> --char-read -a 0x002a
 	public void lireCharacteristic() {
 		Log.i(TAG, "lireCharacteristic dans BleGattVvnx");		
-		mBluetoothGatt.readCharacteristic(mCharacteristic); //mCharacteristic est construite dans la BluetoothGattCallback onServicesDiscovered()
+		mBluetoothGatt_1.readCharacteristic(mCharacteristic); //mCharacteristic est construite dans la BluetoothGattCallback onServicesDiscovered()
 	}
 	
 	//Write char, l'équivalent de gatttool -b <bdaddr> --char-write-req -a 0x002e -n 0203ffabef
