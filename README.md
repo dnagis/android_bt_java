@@ -1,31 +1,32 @@
 # Bluetooth Gatt en java (BlueVvnx)
  
-## BDADDR:
-	 nouvelle bdaddr: juste modifier res/values/strings.xml -> la première de la liste sera prise au démarrage dans BlueActivity à onItemSelected() même sans rien faire
-	 Multiples bdaddr possibles via menu déroulant (spinner), mais je dois avoir un pb de recyclage que j'ai la flemme de gérer: du coup 
-	 workaround quand tu veux passer de l'un à l'autre: fermer appli puis la relancer
+## Ergonomie
 	 
-## routine aosp:
+### routine aosp:
 	 make BlueVvnx 
 	 adb uninstall vvnx.bluevvnx 
 	 adb install out/target/product/mido/system/app/BlueVvnx/BlueVvnx.apk
 
-# repo / rsync
-Avril 2020 pendant le travail pas de push tout le temps, enovi sur kimsufi c'est plus rapide:
+### repo / rsync
+
+Avril 2020 simplification de l'envoi remote:
 rsync -azvhu /initrd/mnt/dev_save/android/lineageOS/sources/development/samples/BlueVvnx ks:/home/android
  
- adb shell, la première fois seulement! Inutile de se faire chier à le refaire chaque fois!
- dumpsys deviceidle whitelist +com.example.android.bluevvnx;\
- pm grant com.example.android.bluevvnx android.permission.ACCESS_FINE_LOCATION;\
- pm grant com.example.android.bluevvnx android.permission.ACCESS_COARSE_LOCATION 
- 
- logcat -s BlueVvnx
+adb shell -> 
+dumpsys deviceidle whitelist +vvnx.bluevvnx;\
+pm grant com.example.android.bluevvnx android.permission.ACCESS_FINE_LOCATION;\
+pm grant com.example.android.bluevvnx android.permission.ACCESS_COARSE_LOCATION 
 
- 2 Entrées possibles: via UI ou en shell via am start-service com.example.android.bluevvnx/.BlueService  
- Atention si tu utilises le service: je commente dans BlueService.onCreate() la partie qui lance bluetoothGATT, parce 
- que sinon: l'UI crée une instance bluetoothGATT, et ensuite le service pourrait aussi en créer une.
+logcat -s BlueVvnx
+
+
+## ToDo
+2 connexions: possible?
+
+
  
 
+## Old
  
  Historique:
  Première fonction implémentée (chronologiquement): LeScan mBluetoothLeScanner.startScan(filters, settings, mScanCallback) --> mScanCallback 
@@ -41,11 +42,6 @@ rsync -azvhu /initrd/mnt/dev_save/android/lineageOS/sources/development/samples/
  Deuxième système à faire:
 	Alarm: Bouton -> repeating alarm, au bout de laquelle un service, qui connecte, et dans une callback récupère de la data (char read), puis disconnect.
 	Voir si persistance. Combien de temps?
-	
- 
- 
-  
-
  
  ****attention!!****: pour arrêter c'est:
  am force-stop com.example.android.bluevvnx
@@ -57,6 +53,7 @@ rsync -azvhu /initrd/mnt/dev_save/android/lineageOS/sources/development/samples/
 
  Page très helpfull pour GATT:
  http://nilhcem.com/android-things/bluetooth-low-energy
+ 
 
  **Intents: lancement avec un intent explicite, syntaxe:
  
