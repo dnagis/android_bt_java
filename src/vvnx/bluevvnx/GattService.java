@@ -40,7 +40,8 @@ public class GattService extends Service  {
 	private final String TAG = "BlueVvnx";
 	private static final String BDADDR_1 = "30:AE:A4:05:0C:BE"; //Plaque de dev 	
 	//private static final String BDADDR_2 = "30:AE:A4:04:C3:5A"; 
-
+	private UtilsVvnx mUtilsVvnx = new UtilsVvnx();
+	private Context mContext;
 	
 
 	public static final int MSG_REG_CLIENT = 200;//enregistrer le client dans le service
@@ -114,7 +115,7 @@ public class GattService extends Service  {
                     break;
 				case MSG_STOP:
                     Log.d(TAG, "Service: handleMessage() -> STOP");
-                    //shutDown();
+                    //disconnect();
                     break;                    
                 default:
                     super.handleMessage(msg);
@@ -130,6 +131,7 @@ public class GattService extends Service  {
 	@Override
 	public int onStartCommand(Intent intent, int flags, int startId) {
 		Log.d(TAG, "onStartCommand()");
+		mContext = this;
 		//Foreground
         int importance = NotificationManager.IMPORTANCE_DEFAULT;
         String CHANNEL_ID = "MA_CHAN_ID";
@@ -189,8 +191,11 @@ public class GattService extends Service  {
 
 	}
 	
-	void disconnectmGatt(){
-		mBluetoothGatt_1.disconnect();
+	public void disconnect() {
+		if (mBluetoothGatt_1 != null) {
+			mBluetoothGatt_1.disconnect();
+			mBluetoothGatt_1.close(); 
+		}
 	}
 	
 	/**
@@ -237,15 +242,17 @@ public class GattService extends Service  {
 	public void onServicesDiscovered(BluetoothGatt gatt, int status) {
 			Log.i(TAG, "onServicesDiscovered callback.");
 			mCharacteristic = gatt.getService(SERVICE_UUID).getCharacteristic(CHARACTERISTIC_PRFA_UUID);
-			gatt.setCharacteristicNotification(mCharacteristic, true);
+			//gatt.setCharacteristicNotification(mCharacteristic, true);
+			gatt.readCharacteristic(mCharacteristic); 
 	}
 
 	
 	@Override
 	public void onCharacteristicRead(BluetoothGatt gatt, BluetoothGattCharacteristic characteristic, int status) {
-			//Log.i(TAG, "onCharacteristicRead callback.");
+			Log.i(TAG, "onCharacteristicRead callback.");
 			byte[] data = characteristic.getValue();
 			Log.i(TAG, "onCharacteristicRead callback -> char data: " + data[0] + " " + data[1] + " " + data[2]); //donne pour data[0]: -86 et printf %x -86 --> ffffffffffffffaa or la value côté esp32 est 0xaa 
+			mUtilsVvnx.parseGPIO(mContext, data);
 			}
 	
 	

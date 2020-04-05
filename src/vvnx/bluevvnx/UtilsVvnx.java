@@ -4,6 +4,7 @@ package vvnx.bluevvnx;
 import android.database.sqlite.SQLiteDatabase;
 import android.content.ContentValues;
 import android.content.Context;
+import android.util.Log;
 
 	/**
 	 * 
@@ -16,14 +17,16 @@ import android.content.Context;
 
 public class UtilsVvnx  {
 	
+	private final String TAG = "BlueVvnx";
+	
 	//sql
     private BaseDeDonnees maBDD;
     private SQLiteDatabase bdd;
 	
 	//anémo (esp32: gatts_gpio) encodage dans 2 bytes
-	private void parseGPIO(Context context, byte[] data) {
+	public void parseGPIO(Context context, byte[] data) {
 			int valeur = (data[0] & 0xFF) << 8 | (data[1] & 0xFF);
-			//Log.i(TAG, "parseGPIO data: "+valeur);			
+			Log.i(TAG, "parseGPIO data: "+valeur);			
 			//Seulement si c'est via UI (BlueActivity), sinon si lancé à partir du service en adb shell->plante
 			//mBlueActivity = (BlueActivity) mContext; //pour pouvoir appeler ses methods
 			//mBlueActivity.updateText(String.valueOf(valeur));
@@ -32,7 +35,7 @@ public class UtilsVvnx  {
 	 }
 	 
 	 private void logCountEnBdd(Context context, long ts, int count) {
-		//sqlite3 /data/data/com.example.android.bluevvnx/databases/data.db "select datetime(ALRMTIME, 'unixepoch','localtime'), COUNT from envdata;"
+		//sqlite3 /data/data/vvnx.bluevvnx/databases/data.db "select datetime(ALRMTIME, 'unixepoch','localtime'), COUNT from envdata;"
 		
 		maBDD = new BaseDeDonnees(context);
 		bdd = maBDD.getWritableDatabase();
@@ -42,7 +45,7 @@ public class UtilsVvnx  {
 		bdd.insert("envdata", null, values);
 	}
 	
-		/**
+	 /**
 	 * 
 	 * ça ne peut pas passer: les bytes en java peuvent pas contenir la valeur de la pression
 	 * il faut faire comme alarmGatt, j'ai la flemme de changer ce soir. Mais ne t'étonnes pas si tu as

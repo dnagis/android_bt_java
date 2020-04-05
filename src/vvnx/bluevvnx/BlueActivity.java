@@ -64,6 +64,12 @@ public class BlueActivity extends Activity {
 	
 	public void ActionPressBouton_2(View v) {
 		Log.d(TAG, "press bouton 2");
+		Message msg = Message.obtain(null, GattService.MSG_STOP);
+        try {
+               mService.send(msg);
+            } catch (RemoteException e) {
+                e.printStackTrace();
+            }
 
 	}
 
