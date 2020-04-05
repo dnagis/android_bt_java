@@ -38,8 +38,9 @@ public class GattService extends Service  {
 	private BluetoothAdapter mBluetoothAdapter = null;	
 	private BluetoothGattCharacteristic mCharacteristic = null;	
 	private final String TAG = "BlueVvnx";
-	private static final String BDADDR_1 = "30:AE:A4:04:C3:5A"; //Plaque de dev ESP_NOIR
-	private static final String BDADDR_2 = "30:AE:A4:05:0C:BE"; //Plaque de dev ESP_DEV_2
+	private static final String BDADDR_1 = "30:AE:A4:05:0C:BE"; //Plaque de dev 	
+	//private static final String BDADDR_2 = "30:AE:A4:04:C3:5A"; 
+
 	
 
 	public static final int MSG_REG_CLIENT = 200;//enregistrer le client dans le service
@@ -180,16 +181,11 @@ public class GattService extends Service  {
 			mBluetoothGatt_1.connect();
 		}
 		
-		Log.d(TAG, "on crée un device avec adresse:" + BDADDR_2);
-		
-		BluetoothDevice monEsp_2 = mBluetoothAdapter.getRemoteDevice(BDADDR_2);   
-		
-		if (mBluetoothGatt_2 == null) {
-			Log.d(TAG, "pas encore de mBluetoothGatt_2: on la crée");
-			mBluetoothGatt_2 = monEsp_2.connectGatt(this, true, gattCallback);
-		} else {
-			mBluetoothGatt_2.connect();
-		}
+		/** Deuxième device
+		Log.d(TAG, "on crée un device avec adresse:" + BDADDR_2);		
+		BluetoothDevice monEsp_2 = mBluetoothAdapter.getRemoteDevice(BDADDR_2);  		
+		if (mBluetoothGatt_2 == null) {	mBluetoothGatt_2 = monEsp_2.connectGatt(this, true, gattCallback);
+		} else {	mBluetoothGatt_2.connect();	}**/
 
 	}
 	

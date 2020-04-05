@@ -5,6 +5,8 @@ import android.os.Bundle;
 import android.os.IBinder;
 import android.view.View;
 import android.view.WindowManager;
+import java.text.SimpleDateFormat;
+import java.util.Date; 
 
 import android.widget.Button;
 import android.widget.TextView;
@@ -31,6 +33,8 @@ public class BlueActivity extends Activity {
 	Messenger mService = null;
 
 	private Drawable default_btn;
+	
+	TextView textview1;
 
 
     @Override
@@ -40,6 +44,8 @@ public class BlueActivity extends Activity {
 
         View view = getLayoutInflater().inflate(R.layout.bluevvnxmain, null);
         setContentView(view);
+        
+        textview1 = findViewById(R.id.text1);	
         
         //récup le background par default du bouton pour le remettre
         Button button1 = findViewById(R.id.button_1);
@@ -67,11 +73,12 @@ public class BlueActivity extends Activity {
 
 	}
 	
-	public void updateText(String myString) {
-		Log.d(TAG, "updateText dans BlueActivity");
-		TextView textview1 = findViewById(R.id.text1);	
-        textview1.setText(myString);
-        textview1.invalidate();
+	public void updateText() {
+		//Log.d(TAG, "updateText dans BlueActivity");
+
+        Date d = new Date();
+		SimpleDateFormat sdf = new SimpleDateFormat("dd MMM HH:mm:ss");	
+		textview1.setText("LAST CONNECT: \n"+ sdf.format(d));
     }
     
     public void btn1_to_blue() {
@@ -95,6 +102,7 @@ public class BlueActivity extends Activity {
                 case GattService.MSG_BT_CONNECTED:
                     Log.d(TAG, "Activity: handler -> MSG_BT_CONNECTED");
                     btn1_to_blue();
+                    updateText();
                     break;
                 case GattService.MSG_BT_DISCONNECTED:
                     Log.d(TAG, "Activity: handler -> MSG_BT_DISCONNECTED");

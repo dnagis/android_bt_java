@@ -20,7 +20,10 @@ pm grant com.example.android.bluevvnx android.permission.ACCESS_COARSE_LOCATION
 logcat -s BlueVvnx
 
 
-## ToDo
+## Reconnexion
+esp32 gatt_server + deep sleep (examples/system/ du sdk)
+première connexion, sleeps de 3 minute -> on a reconnexion combien de temps?
+	tel branché et débranché.
 
 
 
