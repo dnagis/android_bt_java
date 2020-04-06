@@ -32,14 +32,19 @@ import java.util.UUID;
 
 public class GattService extends Service  {
 
-	private Notification mNotification;
+	private BluetoothAdapter mBluetoothAdapter = null;
+	private BluetoothDevice mEspDevice = null;
 	private BluetoothGatt mBluetoothGatt_1 = null;
-	private BluetoothGatt mBluetoothGatt_2 = null;
-	private BluetoothAdapter mBluetoothAdapter = null;	
+	//private BluetoothGatt mBluetoothGatt_2 = null;		
 	private BluetoothGattCharacteristic mCharacteristic = null;	
 	private final String TAG = "BlueVvnx";
 	private static final String BDADDR_1 = "30:AE:A4:05:0C:BE"; //Plaque de dev 	
 	//private static final String BDADDR_2 = "30:AE:A4:04:C3:5A"; 
+	private boolean mFlagGattDropAsked = false;
+	
+	
+	private Notification mNotification;
+	
 	private UtilsVvnx mUtilsVvnx = new UtilsVvnx();
 	private Context mContext;
 	
@@ -115,7 +120,7 @@ public class GattService extends Service  {
                     break;
 				case MSG_STOP:
                     Log.d(TAG, "Service: handleMessage() -> STOP");
-                    //disconnect();
+                    dropGatt();
                     break;                    
                 default:
                     super.handleMessage(msg);
@@ -133,7 +138,7 @@ public class GattService extends Service  {
 		Log.d(TAG, "onStartCommand()");
 		mContext = this;
 		//Foreground
-        int importance = NotificationManager.IMPORTANCE_DEFAULT;
+        /*int importance = NotificationManager.IMPORTANCE_DEFAULT;
         String CHANNEL_ID = "MA_CHAN_ID";
         NotificationChannel channel = new NotificationChannel(CHANNEL_ID, "ma_channel", importance);
         channel.setSound(null, null);
@@ -148,7 +153,7 @@ public class GattService extends Service  {
                 .setContentText("BlueVvnx")  // the contents of the entry
                 .build();	
 			
-		startForeground(1, mNotification);
+		startForeground(1, mNotification);*/
 		
 		//Bluetooth
 		connectmGatt();
@@ -174,12 +179,14 @@ public class GattService extends Service  {
 
 		Log.d(TAG, "on crée un device avec adresse:" + BDADDR_1);
 		
-		BluetoothDevice monEsp_1 = mBluetoothAdapter.getRemoteDevice(BDADDR_1);   
+		mEspDevice = mBluetoothAdapter.getRemoteDevice(BDADDR_1);   
 		
 		if (mBluetoothGatt_1 == null) {
 			Log.d(TAG, "pas encore de mBluetoothGatt_1: on la crée");
-			mBluetoothGatt_1 = monEsp_1.connectGatt(this, true, gattCallback);
+			//Attention: même si l'esp n'est pas disponible et que l'adapter ne s'y est jamais connecté, dès son apparition il se connectera
+			mBluetoothGatt_1 = mEspDevice.connectGatt(this, true, gattCallback);
 		} else {
+			Log.d(TAG, "mBluetoothGatt_1 existe: on lance connect() dessus");
 			mBluetoothGatt_1.connect();
 		}
 		
@@ -191,12 +198,32 @@ public class GattService extends Service  {
 
 	}
 	
-	public void disconnect() {
-		if (mBluetoothGatt_1 != null) {
-			mBluetoothGatt_1.disconnect();
-			mBluetoothGatt_1.close(); 
-		}
+
+	public void dropGatt() {
+			Log.d(TAG, "dropGatt...");
+			
+			//on vérifie connectionState du device
+			final BluetoothManager bluetoothManager = (BluetoothManager)getSystemService(Context.BLUETOOTH_SERVICE);
+			int connState = bluetoothManager.getConnectionState(mEspDevice, BluetoothProfile.GATT);
+			
+			Log.d(TAG, "connState du device: "+connState); //https://developer.android.com/reference/android/bluetooth/BluetoothProfile#STATE_CONNECTED
+			if (connState == BluetoothProfile.STATE_CONNECTED) {
+				mFlagGattDropAsked = true; //permet à la callback de savoir que l'on doit passer par closeGatt()
+				mBluetoothGatt_1.disconnect(); 				
+			} else {
+				closeGatt();
+			}
+ 
 	}
+	
+	public void closeGatt() {
+		Log.d(TAG, "on lance close() sur la gatt");
+		mBluetoothGatt_1.close(); 
+		//close() désenregistre la gatt de l'adapter. Si on veut pouvoir se reconnecter ultérieurement il faut nuller la gatt pour repasser par connectGatt()
+		//https://stackoverflow.com/questions/23110295/difference-between-close-and-disconnect
+		mBluetoothGatt_1 = null;
+		
+		}
 	
 	/**
 	 * 
@@ -215,6 +242,7 @@ public class GattService extends Service  {
 
 		if (newState == BluetoothProfile.STATE_CONNECTED) {
 			Log.i(TAG, "Connected to GATT server addr=" + gatt.getDevice().getAddress());
+			//on envoie le message à l'activité pour refresh affichage
 			Message msg = Message.obtain(null, MSG_BT_CONNECTED);
 			try {
                 mClient.send(msg);
@@ -223,8 +251,16 @@ public class GattService extends Service  {
             }					
 
 			gatt.discoverServices();
+			
 		} else if (newState == BluetoothProfile.STATE_DISCONNECTED) {
 			Log.i(TAG, "Disconnected from GATT server.");
+			//on est là parce que disconnect() a été lancé (voir plus haut), on close la gatt
+			if (mFlagGattDropAsked) {
+				mFlagGattDropAsked = false;
+				closeGatt();
+			}
+			
+			//on envoie le message à l'activité pour refresh affichage
 			Message msg = Message.obtain(null, MSG_BT_DISCONNECTED);
 			try {
                 mClient.send(msg);
@@ -240,7 +276,7 @@ public class GattService extends Service  {
 	
 	@Override
 	public void onServicesDiscovered(BluetoothGatt gatt, int status) {
-			Log.i(TAG, "onServicesDiscovered callback.");
+			//Log.i(TAG, "onServicesDiscovered callback.");
 			mCharacteristic = gatt.getService(SERVICE_UUID).getCharacteristic(CHARACTERISTIC_PRFA_UUID);
 			//gatt.setCharacteristicNotification(mCharacteristic, true);
 			gatt.readCharacteristic(mCharacteristic); 
@@ -249,9 +285,9 @@ public class GattService extends Service  {
 	
 	@Override
 	public void onCharacteristicRead(BluetoothGatt gatt, BluetoothGattCharacteristic characteristic, int status) {
-			Log.i(TAG, "onCharacteristicRead callback.");
+			//Log.i(TAG, "onCharacteristicRead callback.");
 			byte[] data = characteristic.getValue();
-			Log.i(TAG, "onCharacteristicRead callback -> char data: " + data[0] + " " + data[1] + " " + data[2]); //donne pour data[0]: -86 et printf %x -86 --> ffffffffffffffaa or la value côté esp32 est 0xaa 
+			//Log.i(TAG, "onCharacteristicRead callback -> char data: " + data[0] + " " + data[1] + " " + data[2]); //donne pour data[0]: -86 et printf %x -86 --> ffffffffffffffaa or la value côté esp32 est 0xaa 
 			mUtilsVvnx.parseGPIO(mContext, data);
 			}
 	

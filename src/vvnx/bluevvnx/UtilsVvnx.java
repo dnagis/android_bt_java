@@ -26,7 +26,7 @@ public class UtilsVvnx  {
 	//anémo (esp32: gatts_gpio) encodage dans 2 bytes
 	public void parseGPIO(Context context, byte[] data) {
 			int valeur = (data[0] & 0xFF) << 8 | (data[1] & 0xFF);
-			Log.i(TAG, "parseGPIO data: "+valeur);			
+			//Log.i(TAG, "parseGPIO data: "+valeur);			
 			//Seulement si c'est via UI (BlueActivity), sinon si lancé à partir du service en adb shell->plante
 			//mBlueActivity = (BlueActivity) mContext; //pour pouvoir appeler ses methods
 			//mBlueActivity.updateText(String.valueOf(valeur));

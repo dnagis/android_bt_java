@@ -6,24 +6,37 @@
 	 make BlueVvnx 
 	 adb uninstall vvnx.bluevvnx 
 	 adb install out/target/product/mido/system/app/BlueVvnx/BlueVvnx.apk
+	 
+	 logcat -s BlueVvnx
 
 ### repo / rsync
 
 Avril 2020 simplification de l'envoi remote:
 rsync -azvhu /initrd/mnt/dev_save/android/lineageOS/sources/development/samples/BlueVvnx ks:/home/android
  
-adb shell -> 
-dumpsys deviceidle whitelist +vvnx.bluevvnx;\
-pm grant com.example.android.bluevvnx android.permission.ACCESS_FINE_LOCATION;\
-pm grant com.example.android.bluevvnx android.permission.ACCESS_COARSE_LOCATION 
-
-logcat -s BlueVvnx
 
 
-## Reconnexion
+
+## LifeCycle / Physiologie de connexion gatt
+
+-BluetoothDevice.connectGatt() -> arg2 à true = présence du device non indispensable: 
+	L'adapter a l'adresse enregistrée, dès que le device se présentera il sera connecté (je n'ai pas testé s'il y avait un timeout, à mon avis il n'y en a pas).
+	Donc pas nécessaire d'avoir le device allumé au moment de lancer le connectGatt().
+-BluetoothGatt.close() -> désenregistre la gatt. si tu ne repasses pas par connectGatt() il n'y aura plus de reconnexion possible sur ce device.	
+	solution: après le close() nuller la BluetoothGatt pour repasser par connectGatt()
+
+
+
+
+## Reconnexion gatt: "voie royale"???
 esp32 gatt_server + deep sleep (examples/system/ du sdk)
-première connexion, sleeps de 3 minute -> on a reconnexion combien de temps?
-	tel branché et débranché.
+après une première connexion, lorsque l'esp32 réapparait au wakeup, le gatt android se reconnecte, overnight toutes les 20min. Avec foreground service.
+
+foreground service -> ne serait pas nécessaire. 
+UI on top -> ne serait pas nécessaire non plus.
+
+tests en cours
+
 
 
 
