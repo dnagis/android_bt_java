@@ -41,7 +41,8 @@
     android:label="BlueVvnx"
     android:directBootAware="true"
     android:debuggable="true">
-        <activity android:name="BlueActivity">
+        <activity android:name="BlueActivity"
+					android:configChanges="orientation|screenLayout|screenSize">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
                 <category android:name="android.intent.category.LAUNCHER"/>

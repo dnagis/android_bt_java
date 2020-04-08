@@ -36,7 +36,10 @@ public class BlueActivity extends Activity {
 	
 	TextView textview1;
 
-
+    /**
+     * manifest attribut d'activity pour prevent passage ici quand rotation:
+     * android:configChanges="orientation|screenLayout|screenSize"
+     */
     @Override
     public void onCreate(Bundle savedInstanceState) {
 		Log.d(TAG, "onCreate()");
