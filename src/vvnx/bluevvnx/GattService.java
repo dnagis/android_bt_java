@@ -13,6 +13,7 @@ import android.os.Message;
 import android.os.Messenger;
 import android.os.Handler;
 import android.os.RemoteException;
+import android.os.Bundle;
 
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothManager;
@@ -218,11 +219,12 @@ public class GattService extends Service  {
 	
 	public void closeGatt() {
 		Log.d(TAG, "on lance close() sur la gatt");
-		mBluetoothGatt_1.close(); 
-		//close() désenregistre la gatt de l'adapter. Si on veut pouvoir se reconnecter ultérieurement il faut nuller la gatt pour repasser par connectGatt()
-		//https://stackoverflow.com/questions/23110295/difference-between-close-and-disconnect
-		mBluetoothGatt_1 = null;
-		
+		if (mBluetoothGatt_1 != null) {
+			mBluetoothGatt_1.close(); 
+			//close() désenregistre la gatt de l'adapter. Si on veut pouvoir se reconnecter ultérieurement il faut nuller la gatt pour repasser par connectGatt()
+			//https://stackoverflow.com/questions/23110295/difference-between-close-and-disconnect
+			mBluetoothGatt_1 = null;		
+			}
 		}
 	
 	/**
@@ -244,6 +246,9 @@ public class GattService extends Service  {
 			Log.i(TAG, "Connected to GATT server addr=" + gatt.getDevice().getAddress());
 			//on envoie le message à l'activité pour refresh affichage
 			Message msg = Message.obtain(null, MSG_BT_CONNECTED);
+			Bundle bundle = new Bundle();
+			bundle.putString("bdaddr", gatt.getDevice().getAddress());
+			msg.setData(bundle);
 			try {
                 mClient.send(msg);
             } catch (RemoteException e) {

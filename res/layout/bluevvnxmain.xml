@@ -47,7 +47,7 @@
 	android:text="@string/txt_btn_3"
 	android:onClick="ActionPressBouton_3" />
 	
-	<TextView xmlns:android="http://schemas.android.com/apk/res/android"
+	<TextView 
 	android:id="@+id/text1"	
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
@@ -56,11 +56,11 @@
     android:textSize="30sp"
     android:text="@string/lbl_1" />    
     
-    <TextView xmlns:android="http://schemas.android.com/apk/res/android"
+    <TextView 
     android:id="@+id/text2"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_below="@+id/text1"
+    android:layout_alignParentBottom="true"
     android:textSize="18sp"
     android:text="@string/lbl_2" />    
 

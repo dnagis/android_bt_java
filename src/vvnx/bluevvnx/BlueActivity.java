@@ -34,7 +34,7 @@ public class BlueActivity extends Activity {
 
 	private Drawable default_btn;
 	
-	TextView textview1;
+	TextView textview1, textview2;
 
     /**
      * manifest attribut d'activity pour prevent passage ici quand rotation:
@@ -49,6 +49,7 @@ public class BlueActivity extends Activity {
         setContentView(view);
         
         textview1 = findViewById(R.id.text1);	
+        textview2 = findViewById(R.id.text2);
         
         //récup le background par default du bouton pour le remettre
         Button button1 = findViewById(R.id.button_1);
@@ -82,12 +83,13 @@ public class BlueActivity extends Activity {
 
 	}
 	
-	public void updateText() {
+	public void updateText(String bdaddr) {
 		//Log.d(TAG, "updateText dans BlueActivity");
 
         Date d = new Date();
 		SimpleDateFormat sdf = new SimpleDateFormat("dd MMM HH:mm:ss");	
 		textview1.setText("LAST CONNECT: \n"+ sdf.format(d));
+		textview2.setText(bdaddr);
     }
     
     public void btn1_to_blue() {
@@ -109,9 +111,10 @@ public class BlueActivity extends Activity {
         public void handleMessage(Message msg) {
             switch (msg.what) {
                 case GattService.MSG_BT_CONNECTED:
-                    Log.d(TAG, "Activity: handler -> MSG_BT_CONNECTED");
+					String bdaddr = msg.getData().getString("bdaddr");
+                    Log.d(TAG, "Activity: handler -> MSG_BT_CONNECTED: " + bdaddr);
                     btn1_to_blue();
-                    updateText();
+                    updateText(bdaddr);
                     break;
                 case GattService.MSG_BT_DISCONNECTED:
                     Log.d(TAG, "Activity: handler -> MSG_BT_DISCONNECTED");
