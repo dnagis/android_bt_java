@@ -39,8 +39,8 @@ public class GattService extends Service  {
 	//private BluetoothGatt mBluetoothGatt_2 = null;		
 	private BluetoothGattCharacteristic mCharacteristic = null;	
 	private final String TAG = "BlueVvnx";
-	private static final String BDADDR_1 = "30:AE:A4:05:0C:BE"; //Plaque de dev 	
-	//private static final String BDADDR_2 = "30:AE:A4:04:C3:5A"; 
+	//private static final String BDADDR_1 = "30:AE:A4:05:0C:BE"; //Plaque de dev 	
+	private static final String BDADDR_1 = "30:AE:A4:04:C3:5A"; 
 	private boolean mFlagGattDropAsked = false;
 	
 	
@@ -293,7 +293,8 @@ public class GattService extends Service  {
 			//Log.i(TAG, "onCharacteristicRead callback.");
 			byte[] data = characteristic.getValue();
 			//Log.i(TAG, "onCharacteristicRead callback -> char data: " + data[0] + " " + data[1] + " " + data[2]); //donne pour data[0]: -86 et printf %x -86 --> ffffffffffffffaa or la value côté esp32 est 0xaa 
-			mUtilsVvnx.parseGPIO(mContext, data);
+			//mUtilsVvnx.parseGPIO(mContext, data);
+			mUtilsVvnx.parseBMX280(mContext, characteristic);
 			}
 	
 	

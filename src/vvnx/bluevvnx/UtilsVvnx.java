@@ -6,6 +6,8 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.util.Log;
 
+import android.bluetooth.BluetoothGattCharacteristic;
+
 	/**
 	 * 
 	* juste une zone de stockage de fonctions "utils" pour pas alourdir le code de bluevvnx
@@ -45,33 +47,21 @@ public class UtilsVvnx  {
 		bdd.insert("envdata", null, values);
 	}
 	
-	 /**
-	 * 
-	 * ça ne peut pas passer: les bytes en java peuvent pas contenir la valeur de la pression
-	 * il faut faire comme alarmGatt, j'ai la flemme de changer ce soir. Mais ne t'étonnes pas si tu as
-	 * des pressions à 700-800 en java: la valeur récupérée est négative (-144+872)
-	 * 
-	 * 
-	 * 
-	 * **/
 
-	private void parseBMX280(Context context, byte[] data) {
+
+	public void parseBMX280(Context context, BluetoothGattCharacteristic rxData) {
 		long ts = System.currentTimeMillis()/1000;
-		//voir esp32_bmx280_gatts pour l'encodage des valeurs dans un array de bytes
-		double temp = (double)(data[0]+(data[1]/100.0));
-        if (data[2]==0) temp=-temp;
-        double press = (double)(data[3]+872+(data[4]/100.0));
-        double hum = (double)(data[5]+(data[6]/100.0));		
+		//voir esp32_bmx280_gatts pour l'encodage des valeurs dans un array de bytes	
+		//avant de faisait avec un byte[] mais pour la pression ça passe pas: les bytes en java: aussi grands: il croient que c'est un two's complement donc donne une valeur negative	
+        double temp = (double)(rxData.getIntValue(17,0) + (rxData.getIntValue(17,1)/100.0)); //17 = FORMAT_UINT8
+        double press = (double)(rxData.getIntValue(17,3)+872+(rxData.getIntValue(17,4)/100.0));
+        double hum = (double)(rxData.getIntValue(17,5)+(rxData.getIntValue(17,6)/100.0));
 		//Log.i(TAG, "recup data de la characteristic: " + temp + " " + press + " " + hum + " @" + ts);
 		logBMX280EnBdd(context, temp, press, hum, ts);
-		
-		//Seulement si c'est via UI (BlueActivity), sinon si lancé à partir du service en adb shell->plante
-		//mBlueActivity = (BlueActivity) mContext; //pour pouvoir appeler ses methods
-		//mBlueActivity.updateText(String.valueOf(ts));
 		}
 	
 	private void logBMX280EnBdd(Context context, double temp, double press, double hum, long ts) {
-		//sqlite3 /data/data/com.example.android.bluevvnx/databases/data.db "select datetime(ALRMTIME, 'unixepoch','localtime'), TEMP, PRES, HUM from envdata;"
+		//sqlite3 /data/data/vvnx.bluevvnx/databases/data.db "select datetime(ALRMTIME, 'unixepoch','localtime'), TEMP, PRES, HUM from envdata;"
 		
 		maBDD = new BaseDeDonnees(context);
 		bdd = maBDD.getWritableDatabase();
