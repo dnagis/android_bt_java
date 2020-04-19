@@ -90,6 +90,7 @@ public class BlueActivity extends Activity {
 		SimpleDateFormat sdf = new SimpleDateFormat("dd MMM HH:mm:ss");	
 		textview1.setText("LAST CONNECT: \n"+ sdf.format(d));
 		textview2.setText(bdaddr);
+
     }
     
     public void btn1_to_blue() {
@@ -115,6 +116,7 @@ public class BlueActivity extends Activity {
                     Log.d(TAG, "Activity: handler -> MSG_BT_CONNECTED: " + bdaddr);
                     btn1_to_blue();
                     updateText(bdaddr);
+                    
                     break;
                 case GattService.MSG_BT_DISCONNECTED:
                     Log.d(TAG, "Activity: handler -> MSG_BT_DISCONNECTED");
