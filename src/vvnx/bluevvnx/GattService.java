@@ -5,6 +5,7 @@ import android.util.Log;
 import android.os.IBinder;
 import android.os.Handler;
 import android.content.Intent;
+import android.content.IntentFilter;
 
 import android.content.Context;
 import android.util.Log;
@@ -14,6 +15,9 @@ import android.os.Messenger;
 import android.os.Handler;
 import android.os.RemoteException;
 import android.os.Bundle;
+import android.net.ConnectivityManager;
+
+import android.content.BroadcastReceiver;
 
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothManager;
@@ -35,7 +39,7 @@ import java.util.UUID;
 
 
 
-public class GattService extends Service  {
+public class GattService extends Service {
 
 	private BluetoothAdapter mBluetoothAdapter = null;
 	private BluetoothDevice mEspDevice = null;
@@ -43,12 +47,13 @@ public class GattService extends Service  {
 	//private BluetoothGatt mBluetoothGatt_2 = null;		
 	private BluetoothGattCharacteristic mCharacteristic = null;	
 	private final String TAG = "BlueVvnx";
-	private static final String BDADDR_1 = "30:AE:A4:05:0C:BE"; //Plaque de dev 	
+	private static final String BDADDR_1 = "30:AE:A4:05:0C:BE"; //Plaque de dev   	
 	//private static final String BDADDR_1 = "30:AE:A4:04:C3:5A"; 
 	//private static final String BDADDR_1 = "30:AE:A4:47:55:B2"; //PCB Thor
 	
-	private boolean mFlagGattDropAsked = false;
+
 	
+	private boolean mFlagGattDropAsked = false;	
 	
 	private Notification mNotification;
 	
@@ -164,6 +169,11 @@ public class GattService extends Service  {
 		
 		//Bluetooth
 		connectmGatt();
+		
+		IntentFilter intentFilter = new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION);
+		intentFilter.addAction(Intent.ACTION_AIRPLANE_MODE_CHANGED);
+		BroadcastReceiver br = new MyReceiver();
+		this.registerReceiver(br, intentFilter);
 		
 		return START_NOT_STICKY;
 	}
@@ -334,6 +344,52 @@ public class GattService extends Service  {
 		//mCharacteristic.setValue("43.458900,4.549026");	//ou "hello" of course...		
 		//mBluetoothGatt.writeCharacteristic(mCharacteristic); 
 	}
+	
+	/**
+	 * 
+	 * 
+	 * 
+	 * Détection de mode avion
+	 * 
+	 * 
+	 * 
+	 * **/
+	
+	// Receiver pour détecter sortie de mode avion
+    public class MyReceiver extends BroadcastReceiver {
+        @Override
+        public void onReceive(Context context, Intent intent) {            
+            boolean isAirplaneModeOn = intent.getBooleanExtra("state", false);
+            Log.i(TAG, "onReceive d'un broadcast dans GattService " + isAirplaneModeOn);
+   
+            //si je null pas la gatt j'ai toujours BluetoothGatt: android.os.DeadObjectException à la tentative de .connect() dessus
+            
+             if (isAirplaneModeOn) {
+				closeGatt() ;
+				} else {         
+						//il faut attendre que ça se rallume, si tu tentes aussitôt marche pas
+			            final Handler handler = new Handler();
+						handler.postDelayed(new Runnable() {
+						    @Override
+						    public void run() {  
+							Log.i(TAG, "ce serait bien de reconnecter");
+							//mBluetoothGatt_1.connect();
+							connectmGatt();
+							 					
+
+								
+							}	
+			
+							}, 2000);
+							 }
+				 
+			}
+
+        // constructor
+        public MyReceiver(){
+				Log.i(TAG, "receiver registered");
+        }
+    }
 	
 
 

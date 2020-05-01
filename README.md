@@ -31,12 +31,12 @@ rsync -azvhu /initrd/mnt/dev_save/android/lineageOS/sources/development/samples/
 ## Reconnexion gatt: "voie royale"???
 
 esp32 gatt_server + deep sleep (examples/system/ du sdk)
-après une première connexion, lorsque l'esp32 réapparait au wakeup, le gatt android se reconnecte, overnight toutes les 20min. Avec foreground service.
+après une première connexion, lorsque l'esp32 réapparait au wakeup, le gatt android se reconnecte, toutes les 20min. (un test en cours fin avril: 20 jours)
 
 foreground service -> pas nécessaire. 
 UI on top -> pas nécessaire non plus. (combien de temps???)
 
-tests en cours avec récup http post pour les allers/retours maison. repo "esp32_gatts_conn"
+
 
 
 

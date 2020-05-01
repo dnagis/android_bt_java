@@ -52,6 +52,10 @@
 			android:name=".GattService"
             android:label="@string/lblsrvc"
             android:exported="true">
+                        <intent-filter>
+                <action android:name="android.intent.action.AIRPLANE_MODE_CHANGED"/>
+
+            </intent-filter>
         </service>
     </application>
 </manifest>
