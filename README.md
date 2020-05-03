@@ -31,10 +31,12 @@ rsync -azvhu /initrd/mnt/dev_save/android/lineageOS/sources/development/samples/
 ## Reconnexion gatt: "voie royale"???
 
 esp32 gatt_server + deep sleep (examples/system/ du sdk)
-après une première connexion, lorsque l'esp32 réapparait au wakeup, le gatt android se reconnecte, toutes les 20min. (un test en cours fin avril: 20 jours)
+sur un tel lineageos, après une première connexion, lorsque l'esp32 réapparait au wakeup, le gatt android se reconnecte, toutes les 20min. (un test en cours fin avril: 20 jours)
+mais UI on top, je ne touchais au tel que 2/3 fois par jour, et jamais de mode avion
 
-foreground service -> pas nécessaire. 
-UI on top -> pas nécessaire non plus. (combien de temps???)
+les essais sur un tel de production sont moins positifs. Le pb principal = disparition de l'UI et pas de reconnect. 
+tentative de broadcastreceiver sortie de mode avion. En cours.
+
 
 
 
