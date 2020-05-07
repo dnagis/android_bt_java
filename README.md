@@ -26,6 +26,9 @@ sur un motorola production android 9 : disparition de l'UI. Le pb principal = di
 tentative de broadcastreceiver sortie de mode avion. -> echec
 sur le xiaomi mido en 8.1.0: avec foreground service: connection constante, et reconnection en sortie de mode avion.
 test sans foreground service: 
+	pas de reconnexion en sortie mode avion, j'ai des deadobjectsexception
+	j'essaie de sortir le receiver de la classe service pour voir de l'ext si je peux relancer le sce --> en cours de test
+	
 
 
 
