@@ -151,7 +151,7 @@ public class GattService extends Service {
 		Log.d(TAG, "onStartCommand()");
 		mContext = this;
 		//Foreground
-        /*int importance = NotificationManager.IMPORTANCE_DEFAULT;
+        int importance = NotificationManager.IMPORTANCE_DEFAULT;
         String CHANNEL_ID = "MA_CHAN_ID";
         NotificationChannel channel = new NotificationChannel(CHANNEL_ID, "ma_channel", importance);
         channel.setSound(null, null);
@@ -166,7 +166,7 @@ public class GattService extends Service {
                 .setContentText("BlueVvnx")  // the contents of the entry
                 .build();	
 			
-		startForeground(1, mNotification);*/
+		startForeground(1, mNotification);
 		
 		//Bluetooth
 		connectmGatt();
