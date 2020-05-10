@@ -9,12 +9,7 @@
 	 
 	 logcat -s BlueVvnx
 
-### repo / rsync
-
-Avril 2020 simplification de l'envoi remote:
-rsync -azvhu /initrd/mnt/dev_save/android/lineageOS/sources/development/samples/BlueVvnx ks:/home/android
- 
-## Reconnexion gatt: "voie royale"???
+## Reconnexion gatt:
 
 esp32 gatt_server + deep sleep (examples/system/ du sdk)
 sur un motorola lineageos 8.1.0, après une première connexion, lorsque l'esp32 réapparait au wakeup, le gatt android se reconnecte, toutes les 20min. 
@@ -22,16 +17,20 @@ sur un motorola lineageos 8.1.0, après une première connexion, lorsque l'esp32
 mais UI on top, je ne touchais au tel que 2/3 fois par jour, et jamais de mode avion.
 
 Essais connection permanente, et reconnection à la sortie de mode avion:
-sur un motorola production android 9 : disparition de l'UI. Le pb principal = disparition de l'UI et pas de reconnect. 
-tentative de broadcastreceiver sortie de mode avion. -> echec
-sur le xiaomi mido en 8.1.0: avec foreground service: connection constante, et reconnection en sortie de mode avion.
+
+sur le Xiaomi Mido en 8.1.0: 
+avec foreground service: connection constante, et reconnexion en sortie de mode avion.
 test sans foreground service: 
 	pas de reconnexion en sortie mode avion, j'ai des deadobjectsexception
 		--> j'essaie de sortir le receiver de la classe service pour voir de l'ext si je peux relancer le sce
 	tentative de relance mais "background start not allowed"
-		--> je remets le foreground service --> en cours de test
+		--> je remets le foreground service --> OK --> j'essaie en Android 9.
 	
-
+sur le Motorola Noir production Android 9:
+pas de reconnect en sortie de mode avion après overnight classique (recharge, dodo...)
+en cours: foreground service + broadcastreceiver sortie de mode avion: pas de receive du broadcast en sortie de mode avion après un overnight alors que juste après avoir
+démarré l'appli: j'ai un receive. Pas consistent avec ce que j'ai sur le mido. 
+pistes: Tester sur une autre version Android??? Le motorola blanc est en quelle version???
 
 
 ## LifeCycle / Physiologie de connexion gatt
