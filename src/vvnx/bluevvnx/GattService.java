@@ -48,8 +48,8 @@ public class GattService extends Service {
 	//private BluetoothGatt mBluetoothGatt_2 = null;		
 	private BluetoothGattCharacteristic mCharacteristic = null;	
 	private final String TAG = "BlueVvnx";
-	//private static final String BDADDR_1 = "30:AE:A4:05:0C:BE"; //Plaque de dev   	
-	private static final String BDADDR_1 = "30:AE:A4:04:C3:5A"; //Plaque de dev
+	private static final String BDADDR_1 = "30:AE:A4:04:C3:5A"; //Plaque de dev	
+	//private static final String BDADDR_1 = "30:AE:A4:05:0C:BE"; //Plaque de dev 
 	//private static final String BDADDR_1 = "30:AE:A4:47:55:B2"; //PCB 
 	
 
@@ -313,8 +313,8 @@ public class GattService extends Service {
 	public void onServicesDiscovered(BluetoothGatt gatt, int status) {
 			//Log.i(TAG, "onServicesDiscovered callback.");
 			mCharacteristic = gatt.getService(SERVICE_UUID).getCharacteristic(CHARACTERISTIC_PRFA_UUID);
-			//gatt.setCharacteristicNotification(mCharacteristic, true);
-			gatt.readCharacteristic(mCharacteristic); 
+			gatt.setCharacteristicNotification(mCharacteristic, true);
+			//gatt.readCharacteristic(mCharacteristic); 
 	}
 
 	

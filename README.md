@@ -7,6 +7,8 @@
 	 adb uninstall vvnx.bluevvnx 
 	 adb install out/target/product/generic_arm64/system/app/BlueVvnx/BlueVvnx.apk
 	 
+	 pas de permission nécessaire (en tout cas sur: xiaomi LOS 15.1 = Android 8.1.0)
+	 
 	 logcat -s BlueVvnx
 
 ## Reconnexion gatt:
