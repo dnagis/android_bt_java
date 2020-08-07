@@ -34,7 +34,7 @@ public class BlueActivity extends Activity {
 
 	private Drawable default_btn;
 	
-	TextView textview1, textview2;
+	TextView textview1, textview2, textview3;
 
     /**
      * manifest attribut d'activity pour prevent passage ici quand rotation:
@@ -50,6 +50,7 @@ public class BlueActivity extends Activity {
         
         textview1 = findViewById(R.id.text1);	
         textview2 = findViewById(R.id.text2);
+        textview3 = findViewById(R.id.text3);
         
         //récup le background par default du bouton pour le remettre
         Button button1 = findViewById(R.id.button_1);
@@ -83,14 +84,17 @@ public class BlueActivity extends Activity {
 
 	}
 	
-	public void updateText(String bdaddr) {
-		//Log.d(TAG, "updateText dans BlueActivity");
-
+	public void updateConnText(String bdaddr) {
         Date d = new Date();
-		SimpleDateFormat sdf = new SimpleDateFormat("dd MMM HH:mm:ss");	
-		textview1.setText("LAST CONNECT: \n"+ sdf.format(d));
+		SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss");	//dd MMM HH:mm:ss
+		textview1.setText("Last connect: "+ sdf.format(d));
 		textview2.setText(bdaddr);
-
+    }
+    
+    public void updateNotifText() {
+        Date d = new Date();
+		SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss");
+		textview3.setText("Last notif:     "+ sdf.format(d));
     }
     
     public void btn1_to_blue() {
@@ -113,14 +117,17 @@ public class BlueActivity extends Activity {
             switch (msg.what) {
                 case GattService.MSG_BT_CONNECTED:
 					String bdaddr = msg.getData().getString("bdaddr");
-                    Log.d(TAG, "Activity: handler -> MSG_BT_CONNECTED: " + bdaddr);
+                    Log.d(TAG, "BlueActivity: handler -> MSG_BT_CONNECTED: " + bdaddr);
                     btn1_to_blue();
-                    updateText(bdaddr);
-                    
+                    updateConnText(bdaddr);                    
                     break;
                 case GattService.MSG_BT_DISCONNECTED:
-                    Log.d(TAG, "Activity: handler -> MSG_BT_DISCONNECTED");
+                    Log.d(TAG, "BlueActivity: handler -> MSG_BT_DISCONNECTED");
                     btn1_to_def();
+                    break;
+                case GattService.MSG_BT_NOTIF:
+                    Log.d(TAG, "BlueActivity: handler -> MSG_BT_NOTIF");
+                    updateNotifText();
                     break;
                 default:
                     super.handleMessage(msg);

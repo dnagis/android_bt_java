@@ -66,6 +66,7 @@ public class GattService extends Service {
 	public static final int MSG_STOP = 400;
 	public static final int MSG_BT_CONNECTED = 500;
 	public static final int MSG_BT_DISCONNECTED = 600;
+	public static final int MSG_BT_NOTIF = 700;
 	
 	
 	/**	Correspondance avec l'esp32: 
@@ -334,6 +335,14 @@ public class GattService extends Service {
 	public void onCharacteristicChanged(BluetoothGatt gatt, BluetoothGattCharacteristic characteristic) {
 			Log.i(TAG, "Rx notif: onCharacteristicChanged");
 			byte[] data = characteristic.getValue();
+			//on envoie le message à l'activité pour refresh affichage
+			Message msg = Message.obtain(null, MSG_BT_NOTIF);
+			try {
+                mClient.send(msg);
+
+            } catch (RemoteException e) {
+                 e.printStackTrace();
+            }
 			//parseBMX280(data);	//voir UtilsVvnx.java désormais
 			//parseGPIO(data);
 			}	
