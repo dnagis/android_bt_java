@@ -5,7 +5,7 @@
 ### routine aosp:
 	 make BlueVvnx 
 	 adb uninstall vvnx.bluevvnx 
-	 adb install out/target/product/mido/system/app/BlueVvnx/BlueVvnx.apk
+	 adb install out/target/product/generic_arm64/system/app/BlueVvnx/BlueVvnx.apk
 	 
 	 logcat -s BlueVvnx
 

@@ -48,9 +48,9 @@ public class GattService extends Service {
 	//private BluetoothGatt mBluetoothGatt_2 = null;		
 	private BluetoothGattCharacteristic mCharacteristic = null;	
 	private final String TAG = "BlueVvnx";
-	private static final String BDADDR_1 = "30:AE:A4:05:0C:BE"; //Plaque de dev   	
-	//private static final String BDADDR_1 = "30:AE:A4:04:C3:5A"; 
-	//private static final String BDADDR_1 = "30:AE:A4:47:55:B2"; //PCB Thor
+	//private static final String BDADDR_1 = "30:AE:A4:05:0C:BE"; //Plaque de dev   	
+	private static final String BDADDR_1 = "30:AE:A4:04:C3:5A"; //Plaque de dev
+	//private static final String BDADDR_1 = "30:AE:A4:47:55:B2"; //PCB 
 	
 
 	
