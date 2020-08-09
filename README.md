@@ -7,7 +7,8 @@
 	 adb uninstall vvnx.bluevvnx 
 	 adb install out/target/product/generic_arm64/system/app/BlueVvnx/BlueVvnx.apk
 	 
-	 pas de permission nécessaire (en tout cas sur: xiaomi LOS 15.1 = Android 8.1.0)
+	 pas de permission nécessaire (en tout cas sur: xiaomi LOS 15.1 = Android 8.1.0, ni en production 
+	 sur le Z3 = Android 9)
 	 
 	 logcat -s BlueVvnx
 
