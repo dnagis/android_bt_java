@@ -48,9 +48,9 @@ public class GattService extends Service {
 	//private BluetoothGatt mBluetoothGatt_2 = null;		
 	private BluetoothGattCharacteristic mCharacteristic = null;	
 	private final String TAG = "BlueVvnx";
-	//private static final String BDADDR_1 = "30:AE:A4:04:C3:5A"; //Plaque de dev	 
+	private static final String BDADDR_1 = "30:AE:A4:04:C3:5A"; //Plaque de dev	 
 	//private static final String BDADDR_1 = "30:AE:A4:05:0C:BE"; //Plaque de dev 
-	private static final String BDADDR_1 = "24:62:AB:D7:6E:E6"; //PCB Arles
+	//private static final String BDADDR_1 = "24:62:AB:D7:6E:E6"; //PCB Arles
 	//private static final String BDADDR_1 = "30:AE:A4:47:55:B2"; //PCB LeThor
 	
 	
@@ -330,8 +330,8 @@ public class GattService extends Service {
 			//Log.i(TAG, "onCharacteristicRead callback.");
 			byte[] data = characteristic.getValue();
 			//Log.i(TAG, "onCharacteristicRead callback -> char data: " + data[0] + " " + data[1] + " " + data[2]); //donne pour data[0]: -86 et printf %x -86 --> ffffffffffffffaa or la value côté esp32 est 0xaa 
-			//mUtilsVvnx.parseGPIO(mContext, data);
-			mUtilsVvnx.parseBMX280(mContext, characteristic);
+			//mUtilsVvnx.parseAnemo(mContext, data);
+			//mUtilsVvnx.parseBMX280(mContext, characteristic);
 			}
 	
 	
@@ -349,8 +349,9 @@ public class GattService extends Service {
             } catch (RemoteException e) {
                  e.printStackTrace();
             }
+			
+			mUtilsVvnx.parseAnemo(mContext, data);
 			//parseBMX280(data);	//voir UtilsVvnx.java désormais
-			//parseGPIO(data);
 			}	
 	};
 	  

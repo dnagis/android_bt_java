@@ -25,15 +25,18 @@ public class UtilsVvnx  {
     private BaseDeDonnees maBDD;
     private SQLiteDatabase bdd;
 	
-	//anémo (esp32: gatts_gpio) encodage dans 2 bytes
-	public void parseGPIO(Context context, byte[] data) {
-			int valeur = (data[0] & 0xFF) << 8 | (data[1] & 0xFF);
-			//Log.i(TAG, "parseGPIO data: "+valeur);			
+	//anémo (esp32)
+	public void parseAnemo(Context context, byte[] data) {
+			
+			//int valeur = (data[0] & 0xFF) << 8 | (data[1] & 0xFF); //avant je faisais un encodage dans 2 bytes
+			Log.i(TAG, "parseGPIO data: " + data[0]);			
+			
 			//Seulement si c'est via UI (BlueActivity), sinon si lancé à partir du service en adb shell->plante
 			//mBlueActivity = (BlueActivity) mContext; //pour pouvoir appeler ses methods
 			//mBlueActivity.updateText(String.valueOf(valeur));
-			long ts = System.currentTimeMillis()/1000;
-			logCountEnBdd(context, ts, valeur);
+			
+			//long ts = System.currentTimeMillis()/1000;
+			//logCountEnBdd(context, ts, valeur);
 	 }
 	 
 	 private void logCountEnBdd(Context context, long ts, int count) {
