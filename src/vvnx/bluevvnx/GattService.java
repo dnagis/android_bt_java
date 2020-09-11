@@ -343,6 +343,7 @@ public class GattService extends Service {
 			byte[] data = characteristic.getValue();
 			//on envoie le message à l'activité pour refresh affichage
 			Message msg = Message.obtain(null, MSG_BT_NOTIF);
+			msg.arg1 = data[0];
 			try {
                 mClient.send(msg);
 

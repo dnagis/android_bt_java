@@ -91,10 +91,10 @@ public class BlueActivity extends Activity {
 		textview2.setText(bdaddr);
     }
     
-    public void updateNotifText() {
+    public void updateNotifText(int data) {
         Date d = new Date();
 		SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss");
-		textview3.setText("Last notif:     "+ sdf.format(d));
+		textview3.setText("Last notif:     "+ sdf.format(d) + "  " + data);
     }
     
     public void btn1_to_blue() {
@@ -127,7 +127,7 @@ public class BlueActivity extends Activity {
                     break;
                 case GattService.MSG_BT_NOTIF:
                     Log.d(TAG, "BlueActivity: handler -> MSG_BT_NOTIF");
-                    updateNotifText();
+                    updateNotifText(msg.arg1);
                     break;
                 default:
                     super.handleMessage(msg);
