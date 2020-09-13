@@ -29,14 +29,11 @@ public class UtilsVvnx  {
 	public void parseAnemo(Context context, byte[] data) {
 			
 			//int valeur = (data[0] & 0xFF) << 8 | (data[1] & 0xFF); //avant je faisais un encodage dans 2 bytes
-			Log.i(TAG, "parseGPIO data: " + data[0]);			
+			Log.i(TAG, "parseAnemo data: " + data[0]);			
 			
-			//Seulement si c'est via UI (BlueActivity), sinon si lancé à partir du service en adb shell->plante
-			//mBlueActivity = (BlueActivity) mContext; //pour pouvoir appeler ses methods
-			//mBlueActivity.updateText(String.valueOf(valeur));
 			
-			//long ts = System.currentTimeMillis()/1000;
-			//logCountEnBdd(context, ts, valeur);
+			long ts = System.currentTimeMillis()/1000;
+			logCountEnBdd(context, ts, data[0]);
 	 }
 	 
 	 private void logCountEnBdd(Context context, long ts, int count) {
