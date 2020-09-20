@@ -71,6 +71,7 @@ public class GattService extends Service {
 	public static final int MSG_BT_CONNECTED = 500;
 	public static final int MSG_BT_DISCONNECTED = 600;
 	public static final int MSG_BT_NOTIF = 700;
+	public static final int MSG_EXPORT_DB = 800; //Bouton UI -> export db
 	
 	
 	/**	Correspondance avec l'esp32: 
@@ -139,7 +140,11 @@ public class GattService extends Service {
 				case MSG_STOP:
                     Log.d(TAG, "Service: handleMessage() -> STOP");
                     dropGatt();
-                    break;                    
+                    break;
+                case MSG_EXPORT_DB:
+                    Log.d(TAG, "Service: handleMessage() -> MSG_EXPORT_DB");
+                    //DoSomething
+                    break;                      
                 default:
                     super.handleMessage(msg);
             }

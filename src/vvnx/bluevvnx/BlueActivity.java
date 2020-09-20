@@ -81,7 +81,12 @@ public class BlueActivity extends Activity {
 	
 	public void ActionPressBouton_3(View v) {
 		Log.d(TAG, "press bouton 3");
-
+		Message msg = Message.obtain(null, GattService.MSG_EXPORT_DB);
+        try {
+               mService.send(msg);
+            } catch (RemoteException e) {
+                e.printStackTrace();
+            }
 	}
 	
 	public void updateConnText(String bdaddr) {
