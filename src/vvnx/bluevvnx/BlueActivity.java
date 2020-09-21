@@ -98,7 +98,14 @@ public class BlueActivity extends Activity {
 		 *  sans l'autorisation write storage donnée dans les paramètres j'ai en logcat:
 		  BlueVvnx: erreur export bdd = java.io.FileNotFoundException: /storage/emulated/0/bluevvnx/data.db (Permission denied)*/
 		
-		File backupDBFile = new File("/storage/emulated/0/bluevvnx/data.db"); 
+		//File backupDBFile = new File("/storage/emulated/0/bluevvnx/data.db"); 
+		
+		//Moto Z production. Idem faut créer le dir bluevvnx (possible en shell), et donner la permission write storage dans les paramètres
+		File backupDBFile = new File("/sdcard/bluevvnx/data.db"); 
+		
+		
+		
+		
 		
 		try {
 		FileChannel src = new FileInputStream(currentDBFile).getChannel();
