@@ -26,6 +26,11 @@ import android.content.Intent;
 import android.content.ServiceConnection;
 import android.content.ComponentName;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.nio.channels.FileChannel;
+
 public class BlueActivity extends Activity {
 	
 	private static final String TAG = "BlueVvnx";
@@ -81,12 +86,32 @@ public class BlueActivity extends Activity {
 	
 	public void ActionPressBouton_3(View v) {
 		Log.d(TAG, "press bouton 3");
-		Message msg = Message.obtain(null, GattService.MSG_EXPORT_DB);
-        try {
-               mService.send(msg);
-            } catch (RemoteException e) {
-                e.printStackTrace();
+		
+		//Export de la bdd vers du storage où je peux récupérer sur un tel de production
+		
+		File currentDBFile = new File("/data/data/vvnx.bluevvnx/databases/data.db");
+		//if(currentDBFile.exists()) Log.d(TAG, "yes le fichier existe");
+		
+		
+		/**Sur le mido lineage: File backupDBFile = new File("/storage/emulated/0/bluevvnx/data.db");
+		 * Il faut créer le dir bluevvnx, et la permission doit être donnée dans les paramètres:
+		 *  sans l'autorisation write storage donnée dans les paramètres j'ai en logcat:
+		  BlueVvnx: erreur export bdd = java.io.FileNotFoundException: /storage/emulated/0/bluevvnx/data.db (Permission denied)*/
+		
+		File backupDBFile = new File("/storage/emulated/0/bluevvnx/data.db"); 
+		
+		try {
+		FileChannel src = new FileInputStream(currentDBFile).getChannel();
+		FileChannel dst = new FileOutputStream(backupDBFile).getChannel();
+		dst.transferFrom(src, 0, src.size());
+		Log.d(TAG, "bdd exportdb size="+src.size());		
+		src.close();
+		dst.close();
+		} catch (Exception e) {
+				Log.d(TAG, "erreur export bdd = "+e.toString());
             }
+	
+		
 	}
 	
 	public void updateConnText(String bdaddr) {
