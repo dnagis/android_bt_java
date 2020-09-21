@@ -88,22 +88,22 @@ public class BlueActivity extends Activity {
 		Log.d(TAG, "press bouton 3");
 		
 		//Export de la bdd vers du storage où je peux récupérer sur un tel de production
+		//select datetime(alrmtime, 'unixepoch', 'localtime'), count from envdata;
+		
 		
 		File currentDBFile = new File("/data/data/vvnx.bluevvnx/databases/data.db");
-		//if(currentDBFile.exists()) Log.d(TAG, "yes le fichier existe");
-		
+		//if(currentDBFile.exists()) Log.d(TAG, "yes le fichier existe");		
 		
 		/**Sur le mido lineage: File backupDBFile = new File("/storage/emulated/0/bluevvnx/data.db");
 		 * Il faut créer le dir bluevvnx, et la permission doit être donnée dans les paramètres:
-		 *  sans l'autorisation write storage donnée dans les paramètres j'ai en logcat:
-		  BlueVvnx: erreur export bdd = java.io.FileNotFoundException: /storage/emulated/0/bluevvnx/data.db (Permission denied)*/
+		 * sans l'autorisation write storage donnée dans les paramètres j'ai en logcat:
+		 BlueVvnx: erreur export bdd = java.io.FileNotFoundException: /storage/emulated/0/bluevvnx/data.db (Permission denied)*/
 		
-		//File backupDBFile = new File("/storage/emulated/0/bluevvnx/data.db"); 
+		File backupDBFile = new File("/storage/emulated/0/bluevvnx/data.db"); 
 		
 		//Moto Z production. Idem faut créer le dir bluevvnx (possible en shell), et donner la permission write storage dans les paramètres
-		File backupDBFile = new File("/sdcard/bluevvnx/data.db"); 
-		
-		
+		//Ne marche pas: je n'ai pas une copie des dernières valeurs de la bdd
+		//File backupDBFile = new File("/sdcard/bluevvnx/data.db"); 
 		
 		
 		
