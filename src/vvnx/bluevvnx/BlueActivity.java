@@ -31,6 +31,11 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.nio.channels.FileChannel;
 
+//sql
+import android.database.sqlite.SQLiteDatabase;
+import android.database.sqlite.SQLiteOpenHelper;
+import android.database.Cursor;
+
 public class BlueActivity extends Activity {
 	
 	private static final String TAG = "BlueVvnx";
@@ -85,28 +90,35 @@ public class BlueActivity extends Activity {
 
 	
 	public void ActionPressBouton_3(View v) {
-		Log.d(TAG, "press bouton 3");
+		//Accéder à la base de données
 		
-		//Export de la bdd vers du storage où je peux récupérer sur un tel de production
-		//select datetime(alrmtime, 'unixepoch', 'localtime'), count from envdata;
+		String countQuery = "SELECT  * FROM envdata";
+		BaseDeDonnees maBDD = new BaseDeDonnees(this);
+		SQLiteDatabase bdd = maBDD.getReadableDatabase();
+		Cursor cursor = bdd.rawQuery(countQuery, null);
+		int count = cursor.getCount();
+		cursor.close();
+		
+		Log.d(TAG, "press bouton 3 count rows = " + count);
 		
 		
+		/**Tentative d'export de la bdd vers du storage où je peux récupérer sur un tel de production
+		select datetime(alrmtime, 'unixepoch', 'localtime'), count from envdata;
+				
 		File currentDBFile = new File("/data/data/vvnx.bluevvnx/databases/data.db");
-		//if(currentDBFile.exists()) Log.d(TAG, "yes le fichier existe");		
+		if(currentDBFile.exists()) Log.d(TAG, "yes le fichier existe");		
 		
-		/**Sur le mido lineage: File backupDBFile = new File("/storage/emulated/0/bluevvnx/data.db");
+		Sur le mido lineage: File backupDBFile = new File("/storage/emulated/0/bluevvnx/data.db");
 		 * Il faut créer le dir bluevvnx, et la permission doit être donnée dans les paramètres:
 		 * sans l'autorisation write storage donnée dans les paramètres j'ai en logcat:
-		 BlueVvnx: erreur export bdd = java.io.FileNotFoundException: /storage/emulated/0/bluevvnx/data.db (Permission denied)*/
+		 BlueVvnx: erreur export bdd = java.io.FileNotFoundException: /storage/emulated/0/bluevvnx/data.db (Permission denied)
 		
 		File backupDBFile = new File("/storage/emulated/0/bluevvnx/data.db"); 
 		
-		//Moto Z production. Idem faut créer le dir bluevvnx (possible en shell), et donner la permission write storage dans les paramètres
-		//Ne marche pas: je n'ai pas une copie des dernières valeurs de la bdd
-		//File backupDBFile = new File("/sdcard/bluevvnx/data.db"); 
-		
-		
-		
+		Moto Z production. Idem faut créer le dir bluevvnx (possible en shell), et donner la permission write storage dans les paramètres
+		Ne marche pas: je n'ai pas une copie des dernières valeurs de la bdd
+		File backupDBFile = new File("/sdcard/bluevvnx/data.db"); 
+				
 		try {
 		FileChannel src = new FileInputStream(currentDBFile).getChannel();
 		FileChannel dst = new FileOutputStream(backupDBFile).getChannel();
@@ -117,7 +129,7 @@ public class BlueActivity extends Activity {
 		} catch (Exception e) {
 				Log.d(TAG, "erreur export bdd = "+e.toString());
             }
-	
+		**/
 		
 	}
 	
