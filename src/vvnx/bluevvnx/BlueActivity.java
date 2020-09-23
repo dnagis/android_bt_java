@@ -90,16 +90,22 @@ public class BlueActivity extends Activity {
 
 	
 	public void ActionPressBouton_3(View v) {
-		//Accéder à la base de données
 		
+		/*Accéder à la base de données en utilisant des méthodes de la classe BaseDeDonnees*/
+		
+		BaseDeDonnees maBDD = new BaseDeDonnees(this);		
+		int tailleArrayTimes = maBDD.fetchAllTimes().size();
+		Log.d(TAG, "press bouton 3 taille array = " + tailleArrayTimes + "et last = " + maBDD.fetchAllTimes().get(tailleArrayTimes - 1));
+		
+		
+		/*Accéder à la base de données en faisant la requête ici		
 		String countQuery = "SELECT  * FROM envdata";
 		BaseDeDonnees maBDD = new BaseDeDonnees(this);
 		SQLiteDatabase bdd = maBDD.getReadableDatabase();
 		Cursor cursor = bdd.rawQuery(countQuery, null);
 		int count = cursor.getCount();
-		cursor.close();
+		cursor.close();*/
 		
-		Log.d(TAG, "press bouton 3 count rows = " + count);
 		
 		
 		/**Tentative d'export de la bdd vers du storage où je peux récupérer sur un tel de production
